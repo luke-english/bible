@@ -1,0 +1,9 @@
+/bible
+/web/node_modules
+/src/*.wasm
+/web/*.wasm
+/obj
+**/*.c~
+**/*.h~
+**/*.log
+**/*.pid
