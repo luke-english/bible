@@ -23,6 +23,6 @@ emcc \
   /mnt/src/bible.c \
   /tmp/obj/activity.bc.o \
   /tmp/obj/ctx.bc.o \
-  -o bible-overtype.wasm
+  -o /mnt/wasm/bible.wasm
 
 

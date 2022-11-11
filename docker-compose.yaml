@@ -3,25 +3,27 @@ version: "3.8"
 services:
   node:
     image: node
-    working_dir: /web
+    working_dir: /mnt/node
     volumes:
-      - ./web:/web:rw
+      - ./node:/mnt/node:rw
     entrypoint: "/bin/bash"
-
-  web:
-    image: nginx
-    volumes:
-      - ./web:/usr/share/nginx/html
-    ports:
-      - 14001:80
 
   wasm:
     build:
       context: wasm
       dockerfile: Dockerfile
-    working_dir: /mnt/src
+    working_dir: /mnt/wasm
     volumes:
-      - ./wasm:/mnt/wasm
+      - ./wasm:/mnt/wasm:rw
       - ./src:/mnt/src
     
+  web:
+    image: nginx
+    volumes:
+      - ./web/index.html:/usr/share/nginx/html/index.html
+      - ./web/favicon.ico:/usr/share/nginx/html/favicon.ico
+      - ./node:/usr/share/nginx/html/node
+      - ./wasm:/usr/share/nginx/html/wasm
+    ports:
+      - 14001:80
 

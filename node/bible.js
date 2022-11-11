@@ -24,7 +24,7 @@ const importObject = {
   },
 };
 
-fetch("./bible-overtype.wasm")
+fetch("./wasm/bible.wasm")
   .then((response) => response.arrayBuffer())
   .then((bytes) => WebAssembly.instantiate(bytes, importObject))
   .then((module) => {

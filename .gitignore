@@ -1,7 +1,6 @@
 /bible
-/web/node_modules
-/src/*.wasm
-/web/*.wasm
+/node/node_modules
+/wasm/*.wasm
 /obj
 **/*.c~
 **/*.h~
