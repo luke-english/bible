@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef EMSCRIPTEN
 
@@ -40,25 +41,13 @@ int main(int argc, char** argv) {
 }
 
 #ifdef EMSCRIPTEN
-
-EM_JS(void, call_alert, (char*), {
-  alert('hello world!');
-  throw 'all done';
-});
-
 EMSCRIPTEN_KEEPALIVE
 #endif
-char* on_resize(int rows, int cols) {
-  char* result = "message from c on resize";
-#ifdef EMSCRIPTEN
-  call_alert(result);
-#endif
-
-  char* str = "Test data for $str in addstr(const char *str)";
-  addstr(str);
-  // free(str);
-
-  return result;
+int on_resize(int rows, int cols) {
+  char msg[80];
+  sprintf(msg, "Value of Pi rows = %d; cols = %d", rows, cols);
+  addstr(msg);
+  return 1;
 }
 
 #ifdef EMSCRIPTEN

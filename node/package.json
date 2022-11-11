@@ -1,14 +1,27 @@
 {
-  "name": "bible-overtype-web",
+  "name": "bible-web",
   "version": "1.0.0",
-  "description": "Web placeholder for bible-overtype app",
-  "main": "index.js",
+  "description": "Web placeholder for the Bible app",
+  "main": "dist/bible-bundle.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node_modules/.bin/webpack --config webpack.config.js --mode=production",
+    "watch": "node_modules/.bin/webpack --config webpack.config.js --mode=development -w",
+    "prebuild:dev": "rimraf dist"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "xterm": "^5.0.0"
-  }
+    "xterm": "^5.0.0",
+    "xterm-addon-fit": "^0.6.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
+    "babel-loader": "^9.1.0",
+    "rimraf": "^3.0.2",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.11.1"
+  },
+  "type": "module"
 }

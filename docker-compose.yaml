@@ -6,7 +6,10 @@ services:
     working_dir: /mnt/node
     volumes:
       - ./node:/mnt/node:rw
-    entrypoint: "/bin/bash"
+    entrypoint: "bash -c"
+    command:
+      - |
+        npm run build
 
   wasm:
     build:
@@ -16,6 +19,11 @@ services:
     volumes:
       - ./wasm:/mnt/wasm:rw
       - ./src:/mnt/src
+    entrypoint: "bash -c"
+    command:
+      - |
+        /mnt/wasm/build.sh
+
     
   web:
     image: nginx
