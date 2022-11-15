@@ -40,17 +40,19 @@ fetch("./wasm/bible.wasm")
   .then((bytes) => WebAssembly.instantiate(bytes, importObject))
   .then((module) => {
     ctx.buffer = module.instance.exports.memory.buffer;
-
     ctx.term = createTerminal();
 
-    // What happens when terminal resizes?
     ctx.term.onResize(({cols, rows}) => {
       console.log(`Terminal resize detected ${cols}x${rows}`);
       module.instance.exports.on_resize(rows, cols);
     });
 
+    ctx.term.onKey((keyEvt) => {
+      const key = keyEvt.domEvent.which
+      console.log(keyEvt);
+      console.log(`Terminal keypress detected ${key}`);
+      const keyResult = module.instance.exports.on_keypress(key);
+    });
 
-    const keyResult = module.instance.exports.on_keypress(85);
-
-    ctx.term.write(` K=${keyResult}`);
+    module.instance.exports.on_init();
   });

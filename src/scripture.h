@@ -1,9 +1,7 @@
-#ifndef scripture_h__
+#pragma once
 
 #include  <stdio.h>
 #include  <stdint.h>
-
-#define scripture_h__
 
 #define NUMBER_OF_BOOKS       66
 #define MAX_CHAPTER          150
@@ -25,4 +23,3 @@ const uint8_t *get_this_many_chapters(uint8_t how_many);
 
 const size_t get_chapter_blob(uint8_t **blob, char *book_title, chapter_t chapter);
 
-#endif

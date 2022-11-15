@@ -1,52 +1,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-EM_JS(int, addstr, (const char*));
-#endif /* EMSCRIPTEN*/
-
-#ifndef EMSCRIPTEN
-#include <curses.h>
-#endif /* !EMSCRIPTEN */
-
-#include "activity.h"
+#include "program.h"
 #include "ctx.h"
+#include "activity.h"
 #include "scripture.h"
 
-activity_t* head_activity;
-activity_t* tail_activity;
-
 ctx_t* ctx;
+program_t* program;
 
-#ifdef EMSCRIPTEN
-EMSCRIPTEN_KEEPALIVE
-#endif
-int main(int argc, char** argv) {
-  head_activity = activity_welcome_ctor();
-  tail_activity = head_activity;
-
-#ifdef EMSCRIPTEN
-  ctx = ctx_wasm_ctor(head_activity);
-#endif
-
-  ctx_virtual_init(ctx);
+__attribute__((used))
+void on_init() {
+  activity_t* activity = activity_welcome_ctor(ctx);
+  program = program_ctor(activity, ctx);
 }
 
-#ifdef EMSCRIPTEN
-EMSCRIPTEN_KEEPALIVE
-#endif
-int on_resize(int rows, int cols) {
-  char msg[80];
-  sprintf(msg, "Value of Pi rows = %d; cols = %d", rows, cols);
-  addstr(msg);
-  return 1;
+__attribute__((used))
+void on_resize(int rows, int cols) {
+  program_on_resize(program, rows, cols);
 }
 
-#ifdef EMSCRIPTEN
-EMSCRIPTEN_KEEPALIVE
-#endif
+__attribute__((used))
 int on_keypress(int key) {
+  program_on_keypress(program, key);
 
   const bookinfo_t* allbooks = get_all_books();
 
@@ -56,7 +32,12 @@ int on_keypress(int key) {
     const bookinfo_t book = allbooks[i];
     char msg[20];
     sprintf(msg, "%d - %s", i+1, book.title);
-    addstr(msg);
+    // addstr(msg);
   }
   return 1;
 }
+
+int main(int argc, char** argv) {
+  // on_init();
+}
+
