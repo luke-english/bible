@@ -2,24 +2,17 @@
 #include <stdio.h>
 
 #ifdef EMSCRIPTEN
-
 #include <emscripten.h>
-
-EM_JS(int, addstr, (const char*), {
-  console.log('this is never logged!');
-  alert('this is never printed!');
-  throw 'all done never used';
-});
-
+EM_JS(int, addstr, (const char*));
 #endif /* EMSCRIPTEN*/
+
 #ifndef EMSCRIPTEN
-
 #include <curses.h>
-
 #endif /* !EMSCRIPTEN */
 
 #include "activity.h"
 #include "ctx.h"
+#include "scripture.h"
 
 activity_t* head_activity;
 activity_t* tail_activity;
@@ -53,7 +46,17 @@ int on_resize(int rows, int cols) {
 #ifdef EMSCRIPTEN
 EMSCRIPTEN_KEEPALIVE
 #endif
-char* on_keypress(int key) {
-  char* result = "message from c on keypress";
-  return result;
+int on_keypress(int key) {
+
+  const bookinfo_t* allbooks = get_all_books();
+
+  int i = 0;
+  int n = NUMBER_OF_BOOKS;
+  for (i = 0; i < n; i++) {
+    const bookinfo_t book = allbooks[i];
+    char msg[20];
+    sprintf(msg, "%d - %s", i+1, book.title);
+    addstr(msg);
+  }
+  return 1;
 }

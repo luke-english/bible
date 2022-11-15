@@ -13,7 +13,7 @@ const curses = (ctx) => ({
 
     const startRed = '\x1B[1;3;31m';
     const endColor = '\x1B[0m';
-    ctx.term.write(`${startRed}${decoded_str}${endColor};\n\r`);
+    ctx.term.write(`${startRed}${decoded_str}${endColor}\n\r`);
     console.log(`WEBCURSES: addstr("${decoded_str}")`);
   }
 });

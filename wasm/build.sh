@@ -15,6 +15,9 @@ emcc /mnt/src/activity.c -c \
 
 emcc /mnt/src/ctx.c -c \
   -o /tmp/obj/ctx.bc.o
+
+emcc /mnt/src/scripture.c -c \
+  -o /tmp/obj/scripture.bc.o
 #
 emcc \
   -O3 \
@@ -23,6 +26,7 @@ emcc \
   /mnt/src/bible.c \
   /tmp/obj/activity.bc.o \
   /tmp/obj/ctx.bc.o \
+  /tmp/obj/scripture.bc.o \
   -o /mnt/wasm/bible.wasm
 
 
