@@ -1,8 +1,8 @@
-#pragma once
-
-#define CTX_TYPE_WASM 1 
-
 typedef struct ctx_t ctx_t;
 
-void ctx_virtual_init(ctx_t* ctx);
+int ctx_get_rows(ctx_t* ctx);
+
+int ctx_get_cols(ctx_t* ctx);
+
+void ctx_set_size(ctx_t* ctx, int rows, int cols);
 

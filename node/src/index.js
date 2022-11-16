@@ -55,4 +55,5 @@ fetch("./wasm/bible.wasm")
     });
 
     module.instance.exports.on_init();
+    module.instance.exports.on_resize(ctx.term.rows, ctx.term.cols);
   });
