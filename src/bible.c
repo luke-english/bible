@@ -5,11 +5,14 @@
 #include "ctx.h"
 #include "activity.h"
 
+#include "zcurses.h"
+
 ctx_t* ctx;
 program_t* program;
 
 __attribute__((used))
 void on_init() {
+  ctx = ctx_ctor();
   activity_t* activity = activity_welcome_ctor(NULL, ctx);
   program = program_ctor(activity, ctx);
 }
@@ -25,7 +28,22 @@ int on_keypress(int key) {
   return 1;
 }
 
+#ifndef __EMSCRIPTEN__
 int main(int argc, char** argv) {
-  // on_init();
-}
+	initscr();			/* Start curses mode 		  */
 
+  on_init();
+  on_resize(100, 50);
+
+  char ch;
+  while (TRUE) {
+    ch = getch();
+
+    on_keypress(ch);
+
+	  refresh();
+  }
+
+	endwin();
+}
+#endif

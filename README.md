@@ -1,29 +1,30 @@
 # Bible
 
-Study Bible while practicing typewriter skills. This repository holds the core
-of the toolchain - the terminal based application.
+Study Bible while practicing Liturgical Typing. Follow the Word of God marking
+this journey with a print of the letters as you type them. This repository
+contains the source code of command line application **Bible**, and the Web
+application allowing to run it in a browser.
 
 ## Architecture
 
-Follow these:
+TBA
 
-- 
-## Building
+## Quickstart
 
-WASM binary:
-
-  docker-compose run wasm
-
-JS bundle:
+Build WASM binary:
 
   docker-compose run wasm
 
+Build JS bundle:
 
-## Development
+  docker-compose run wasm
 
-Test in development:
+Start local Web server publishing the WASM application
+in a browser:
 
-  docker-compose up web
+  docker-compose run web
 
-And navigate TBC 
+Start as a CLI application in a Docker container.
+
+  docker-compose run alpine
 

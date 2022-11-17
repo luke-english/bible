@@ -1,4 +1,4 @@
-/bible
+/alpine/bible
 /node/node_modules
 /wasm/*.wasm
 /node/dist/

@@ -1,6 +1,21 @@
 version: "3.8"
 
 services:
+  alpine:
+    build:
+      context: alpine
+      dockerfile: Dockerfile
+    working_dir: /mnt/alpine
+    volumes:
+      - ./alpine:/mnt/alpine:rw
+      - ./src:/mnt/src
+    entrypoint: "sh -c"
+    command:
+      - |
+        ls -las /mnt/alpine
+        sh /mnt/alpine/build-alpine.sh
+        /mnt/alpine/bible
+
   node:
     image: node
     working_dir: /mnt/node

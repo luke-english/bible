@@ -9,6 +9,10 @@ struct ctx_t {
   int cols;
 };
 
+ctx_t* ctx_ctor() {
+  ctx_t* ctx = malloc(sizeof(ctx_t*));
+  return ctx;
+}
 int ctx_get_rows(ctx_t* ctx) {
   return ctx->rows;
 }

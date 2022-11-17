@@ -4,5 +4,7 @@ int ctx_get_rows(ctx_t* ctx);
 
 int ctx_get_cols(ctx_t* ctx);
 
+ctx_t* ctx_ctor();
+
 void ctx_set_size(ctx_t* ctx, int rows, int cols);
 
