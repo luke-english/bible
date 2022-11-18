@@ -2,6 +2,7 @@
 /node/node_modules
 /wasm/*.wasm
 /node/dist/
+/src/curses.h
 /obj
 **/*.c~
 **/*.h~

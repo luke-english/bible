@@ -29,7 +29,7 @@ gcc \
   /tmp/obj/program.o \
   /tmp/obj/scripture.o \
   /tmp/obj/zcurses.o \
-  -o /mnt/exec/bible \
+  -o /tmp/bible \
   -lncurses
 
 

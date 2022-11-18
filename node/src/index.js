@@ -43,15 +43,15 @@ fetch("./wasm/bible.wasm")
     ctx.term = createTerminal();
 
     ctx.term.onResize(({cols, rows}) => {
-      console.log(`Terminal resize detected ${cols}x${rows}`);
       module.instance.exports.on_resize(rows, cols);
     });
-
+    
     ctx.term.onKey((keyEvt) => {
-      const key = keyEvt.domEvent.which
-      console.log(keyEvt);
-      console.log(`Terminal keypress detected ${key}`);
-      const keyResult = module.instance.exports.on_keypress(key);
+      const { key } = keyEvt;
+      const chars = new TextEncoder().encode(key);
+      chars.forEach(c => {
+        module.instance.exports.on_keypress(c);
+      });
     });
 
     module.instance.exports.on_init();

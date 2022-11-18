@@ -16,7 +16,6 @@ program_t* program_ctor(activity_t* activity, ctx_t* ctx) {
   program->ctx = ctx;
   program->head_activity = activity;
   program->tail_activity = activity;
-  
   return program;
 }
 

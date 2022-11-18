@@ -7,14 +7,16 @@ services:
       dockerfile: Dockerfile
     working_dir: /mnt/alpine
     volumes:
-      - ./alpine:/mnt/alpine:rw
+      - ./alpine:/mnt/alpine
       - ./src:/mnt/src
     entrypoint: "sh -c"
     command:
       - |
-        ls -las /mnt/alpine
+        # For educational purposes
+        cat /usr/include/curses.h
+
         sh /mnt/alpine/build-alpine.sh
-        /mnt/alpine/bible
+        /tmp/bible
 
   node:
     image: node

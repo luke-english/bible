@@ -6,6 +6,7 @@
 #include "activity.h"
 
 #include "zcurses.h"
+#include "colors.h"
 
 ctx_t* ctx;
 program_t* program;
@@ -15,6 +16,16 @@ void on_init() {
   ctx = ctx_ctor();
   activity_t* activity = activity_welcome_ctor(NULL, ctx);
   program = program_ctor(activity, ctx);
+  
+  start_color();
+
+  init_pair(MY_PAIR_LABEL, COLOR_YELLOW, COLOR_BLACK);
+  init_pair(MY_PAIR_WRONG, COLOR_BLACK, COLOR_RED);
+  init_pair(MY_PAIR_TODO, COLOR_WHITE, COLOR_BLACK);
+  init_pair(MY_PAIR_DONE, COLOR_GREEN, COLOR_BLACK);
+  init_pair(MY_PAIR_MENU, COLOR_GREEN, COLOR_BLACK);
+  init_pair(MY_PAIR_MENU_SELECTED, COLOR_BLACK, COLOR_GREEN);
+  init_pair(MY_PAIR_MENU_SELECTED_HI, COLOR_BLUE, COLOR_YELLOW);
 }
 
 __attribute__((used))
@@ -30,18 +41,26 @@ int on_keypress(int key) {
 
 #ifndef __EMSCRIPTEN__
 int main(int argc, char** argv) {
-	initscr();			/* Start curses mode 		  */
+  int rows; int cols;
+
+	initscr();
+  noecho();
 
   on_init();
-  on_resize(100, 50);
+  getmaxyx(stdscr, rows, cols);
+  on_resize(rows, cols);
 
   char ch;
   while (TRUE) {
     ch = getch();
 
-    on_keypress(ch);
+    if (ch == 154) {
+      getmaxyx(stdscr, rows, cols);
+      on_resize(rows, cols);
+    } else {
+      on_keypress(ch);
+    }
 
-	  refresh();
   }
 
 	endwin();
