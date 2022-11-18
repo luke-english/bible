@@ -7,4 +7,6 @@
 #define MY_PAIR_MENU             5
 #define MY_PAIR_MENU_SELECTED    6
 #define MY_PAIR_MENU_SELECTED_HI 7
+#define MY_PAIR_DESKTOP          8
+#define MY_PAIR_ALERT            9
   

@@ -4,6 +4,7 @@ const curses = (ctx) => ({
   call_alert: (...param) => {
     console.log("with param", {param});
   },
+  waddstr: (win, str) => {},
   addstr: (str) => {
     win = 0;
     const snapshot = new Uint8Array(ctx.buffer)
@@ -32,6 +33,12 @@ const curses = (ctx) => ({
     ctx.win[win].attr &= ~attr;
   },
   refresh: () => {},
+  wrefresh: (win) => {},
+  wbkgd: (win, colorPair) => {},
+  delwin: (win) => {},
+  newwin: () => {},
+  box: () => {},
+  mvwprintw: () => {},
   start_color: () => {
     ctx.win = [];
     ctx.pairs = [];

@@ -14,39 +14,12 @@ struct activity_t {
     activity_t* prev;
     int type;
     int phase;
+    void* details;
 };
 
-activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx) {
-  activity_t* activity = malloc(sizeof(activity_t));
-
-  activity->ctx = ctx;
-  activity->next = NULL;
-  activity->prev = prev;
-  activity->type = ACTIVITY_TYPE_WELCOME;
-  activity->phase = ACTIVITY_PHASE_ACTIVE;
-
-  if (prev != NULL) {
-    prev->next = activity;
-  }
-
-  return activity;
-}
-
-activity_t* activity_selectbook_ctor(activity_t* prev, ctx_t* ctx) {
-  activity_t* activity = malloc(sizeof(activity_t));
-
-  activity->ctx = ctx;
-  activity->next = NULL;
-  activity->prev = prev;
-  activity->type = ACTIVITY_TYPE_SELECTBOOK;
-  activity->phase = ACTIVITY_PHASE_ACTIVE;
-
-  if (prev != NULL) {
-    prev->next = activity;
-  }
-
-  return activity;
-}
+activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx);
+activity_t* activity_selectbook_ctor(activity_t* prev, ctx_t* ctx);
+activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx);
 
 void virtual_activity_dtor(activity_t* activity) {
   if (activity->prev != NULL) {
@@ -71,6 +44,91 @@ void activity_activate(activity_t* activity) {
   activity->phase = ACTIVITY_PHASE_ACTIVE;
 }
 
+// Sandbox ///// 
+
+typedef struct activity_sandbox_t activity_sandbox_t;
+
+struct activity_sandbox_t {
+    WINDOW* redwin;
+};
+
+activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx) {
+  activity_t* activity = malloc(sizeof(activity_t));
+
+  activity->ctx = ctx;
+  activity->next = NULL;
+  activity->prev = prev;
+  activity->type = ACTIVITY_TYPE_SANDBOX;
+  activity->phase = ACTIVITY_PHASE_ACTIVE;
+  activity->details = malloc(sizeof(activity_sandbox_t));
+
+  if (prev != NULL) {
+    prev->next = activity;
+  }
+
+  return activity;
+}
+
+void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
+  char msg[80];
+  sprintf(msg, "RESIX %dx%d\n\r", rows, cols);
+  wbkgd(stdscr, COLOR_PAIR(MY_PAIR_DESKTOP));
+
+
+  WINDOW* win = ((activity_sandbox_t*)(activity->details))->redwin;
+  delwin(win);
+
+  win = newwin(15, 37, 2, 10);
+  ((activity_sandbox_t*)(activity->details))->redwin = win;
+
+  wbkgd(win, COLOR_PAIR(MY_PAIR_ALERT));
+  refresh();
+  box(win, 0, 0);
+
+  wbkgd(win, COLOR_PAIR(MY_PAIR_ALERT));
+  mvwprintw(win, 0, 1, "Greeter");
+  mvwprintw(win, 1, 1, "Hello");
+  waddstr(win, msg);
+
+  // refreshing the window
+  wrefresh(win);
+  
+}
+
+void activity_sandbox_on_keypress(activity_t* activity, int key) {
+
+  WINDOW* win = ((activity_sandbox_t*)(activity->details))->redwin;
+  wattron(win, COLOR_PAIR(MY_PAIR_LABEL));
+  char msg[80];
+  sprintf(msg, "sb %d,\n\r", key);
+  waddstr(win, msg);
+
+	wrefresh(win);
+
+  if (key == 27) {
+    sprintf(msg, "Exiting book sandbox %d", key);
+    activity->phase = ACTIVITY_PHASE_COMPLETE;
+    wbkgd(stdscr, COLOR_PAIR(MY_PAIR_LABEL));
+  }
+}
+
+// Welcome 
+activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx) {
+  activity_t* activity = malloc(sizeof(activity_t));
+
+  activity->ctx = ctx;
+  activity->next = NULL;
+  activity->prev = prev;
+  activity->type = ACTIVITY_TYPE_WELCOME;
+  activity->phase = ACTIVITY_PHASE_ACTIVE;
+
+  if (prev != NULL) {
+    prev->next = activity;
+  }
+
+  return activity;
+}
+
 void activity_welcome_on_resize(activity_t* activity, int rows, int cols) {
   char msg[80];
   sprintf(msg, "RESIX %dx%d\n\r", rows, cols);
@@ -92,7 +150,27 @@ void activity_welcome_on_keypress(activity_t* activity, int key) {
     activity->next = activity_selectbook_ctor(activity, activity->ctx);
     activity->phase = ACTIVITY_PHASE_BACKGROUND;
   }
+  if (key == 's') {
+    activity->next = activity_sandbox_ctor(activity, activity->ctx);
+    activity->phase = ACTIVITY_PHASE_BACKGROUND;
+  }
+}
 
+/// SelectBook //////// 
+activity_t* activity_selectbook_ctor(activity_t* prev, ctx_t* ctx) {
+  activity_t* activity = malloc(sizeof(activity_t));
+
+  activity->ctx = ctx;
+  activity->next = NULL;
+  activity->prev = prev;
+  activity->type = ACTIVITY_TYPE_SELECTBOOK;
+  activity->phase = ACTIVITY_PHASE_ACTIVE;
+
+  if (prev != NULL) {
+    prev->next = activity;
+  }
+
+  return activity;
 }
 
 void activity_selectbook_on_resize(activity_t* activity, int rows, int cols) {
@@ -103,7 +181,6 @@ void activity_selectbook_on_resize(activity_t* activity, int rows, int cols) {
 }
 
 void activity_selectbook_on_keypress(activity_t* activity, int key) {
-
   wattron(stdscr, COLOR_PAIR(MY_PAIR_DONE));
   char msg[80];
   sprintf(msg, "select-book key = %d\n\r", key);
@@ -113,7 +190,6 @@ void activity_selectbook_on_keypress(activity_t* activity, int key) {
   if (key == 27) {
     sprintf(msg, "Exiting book selection %d", key);
     activity->phase = ACTIVITY_PHASE_COMPLETE;
-
 
     const bookinfo_t* allbooks = get_all_books();
 
@@ -131,6 +207,8 @@ void activity_selectbook_on_keypress(activity_t* activity, int key) {
 	refresh();
 }
 
+// Absract methods
+
 void virtual_activity_on_resize(activity_t* activity, int rows, int cols) {
   char ch[80];
   switch (activity->type) {
@@ -139,6 +217,9 @@ void virtual_activity_on_resize(activity_t* activity, int rows, int cols) {
       break;
     case ACTIVITY_TYPE_SELECTBOOK:
       activity_selectbook_on_resize(activity, rows, cols);
+      break;
+    case ACTIVITY_TYPE_SANDBOX:
+      activity_sandbox_on_resize(activity, rows, cols);
       break;
     default:
       sprintf(ch, "Resize not implemented for %d", activity->type);
@@ -156,6 +237,9 @@ void virtual_activity_on_keypress(activity_t* activity, int key) {
       break;
     case ACTIVITY_TYPE_SELECTBOOK:
       activity_selectbook_on_keypress(activity, key);
+      break;
+    case ACTIVITY_TYPE_SANDBOX:
+      activity_sandbox_on_keypress(activity, key);
       break;
     default:
       sprintf(ch, "Keypress not implemented for %d", activity->type);

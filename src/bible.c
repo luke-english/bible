@@ -26,6 +26,8 @@ void on_init() {
   init_pair(MY_PAIR_MENU, COLOR_GREEN, COLOR_BLACK);
   init_pair(MY_PAIR_MENU_SELECTED, COLOR_BLACK, COLOR_GREEN);
   init_pair(MY_PAIR_MENU_SELECTED_HI, COLOR_BLUE, COLOR_YELLOW);
+  init_pair(MY_PAIR_DESKTOP, COLOR_BLUE, COLOR_WHITE);
+  init_pair(MY_PAIR_ALERT, COLOR_WHITE, COLOR_RED);
 }
 
 __attribute__((used))

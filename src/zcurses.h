@@ -14,8 +14,8 @@
 
 
 #define stdscr 0 
-
-typedef uint32_t chtype;
+typedef void WINDOW;
+typedef unsigned chtype;
 #define NCURSES_CAST(type,value) (type)(value)
 #define NCURSES_ATTR_SHIFT       8
 #define NCURSES_BITS(mask,shift) (NCURSES_CAST(chtype,(mask)) << ((shift) + NCURSES_ATTR_SHIFT))
@@ -23,17 +23,20 @@ typedef uint32_t chtype;
 #define COLOR_PAIR(n)	(NCURSES_BITS((n), 0) & A_COLOR)
 
 
-colorPair = (n) => (
-    NCURSES_BITS((n), 0) (n << 8))
-    & A_COLOR)
-
 int init_pair(int pair, int bg, int fg);
-int wattron(void* win, int attr);
-int wattroff(void* win, int attr);
+void wattron(WINDOW* win, chtype attr);
+void wattroff(WINDOW* win, chtype attr);
 int addstr(const char *);
+int waddstr(void* win, const char *);
+void mvwprintw(WINDOW* win, int row, int col, const char*);
+void box(WINDOW*, int, int);
+void wbkgd(void* win, int colorpair);
+WINDOW* newwin(int, int, int, int);
 
 void refresh();
+void wrefresh(void*);
 void start_color();
+void delwin(void*);
 
 #endif /* EMSCRIPTEN */
 
