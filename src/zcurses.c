@@ -4,7 +4,13 @@
 #include "zcurses.h"
 
 EM_JS(int, js_curses_check_key, ());
-EM_JS(void, js_curses_set_char, (int a, int b, int c, int d));
+EM_JS(void, js_curses_set_char, (
+  const int ch,
+  const int row,
+  const int col,
+  const int fg,
+  const int bg
+));
 EM_JS(int, js_curses_get_key, ());
 EM_JS(int, js_curses_get_rows, ());
 EM_JS(int, js_curses_get_cursor_mode, ());

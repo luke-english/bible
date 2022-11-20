@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ansi-escape-sequences": "^6.2.1",
     "xterm": "^5.0.0",
     "xterm-addon-fit": "^0.6.0"
   },

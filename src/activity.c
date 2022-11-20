@@ -72,8 +72,10 @@ activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx) {
 void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
   char msg[80];
   sprintf(msg, "RESIX %dx%d\n\r", rows, cols);
-  wbkgd(stdscr, COLOR_PAIR(MY_PAIR_DESKTOP));
+  bkgdset(COLOR_PAIR(MY_PAIR_DESKTOP));
+  bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
 
+  refresh();
 
   WINDOW* win = ((activity_sandbox_t*)(activity->details))->redwin;
   delwin(win);
@@ -81,11 +83,12 @@ void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
   win = newwin(15, 37, 2, 10);
   ((activity_sandbox_t*)(activity->details))->redwin = win;
 
-  wbkgd(win, COLOR_PAIR(MY_PAIR_ALERT));
-  refresh();
-  box(win, 0, 0);
+  wbkgdset(win, COLOR_PAIR(MY_PAIR_ALERT));
 
   wbkgd(win, COLOR_PAIR(MY_PAIR_ALERT));
+  wrefresh(win);
+  // box(win, 0, 0);
+
   mvwprintw(win, 0, 1, "Greeter");
   mvwprintw(win, 1, 1, "Hello");
   waddstr(win, msg);
