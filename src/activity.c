@@ -3,7 +3,6 @@
 
 #include "activity.h"
 #include "zcurses.h"
-#include "scripture.h"
 #include "colors.h"
 
 typedef struct activity_t activity_t;
@@ -17,200 +16,90 @@ struct activity_t {
     void* details;
 };
 
-activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx);
-activity_t* activity_selectbook_ctor(activity_t* prev, ctx_t* ctx);
-activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx);
+activity_t* activity_super_ctor(int type, void* details, activity_t* prev, ctx_t* ctx) {
+  activity_t* super = malloc(sizeof(activity_t));
 
-void virtual_activity_dtor(activity_t* activity) {
-  if (activity->prev != NULL) {
-    activity->prev->next = NULL;
+  super->ctx = ctx;
+  super->next = NULL;
+  super->prev = prev;
+  super->type = type;
+  super->phase = ACTIVITY_PHASE_ACTIVE;
+  super->details = details;
+
+  if (prev != NULL) {
+    prev->next = super;
   }
-  free(activity);
-}
 
-activity_t* activity_get_next(activity_t* activity) {
-  return activity->next;
-}
-
-activity_t* activity_get_prev(activity_t* activity) {
-  return activity->prev;
-}
-
-int activity_get_phase(activity_t* activity) {
-  return activity->phase;
+  return super;
 }
 
 void activity_activate(activity_t* activity) {
   activity->phase = ACTIVITY_PHASE_ACTIVE;
 }
 
-// Sandbox ///// 
-
-typedef struct activity_sandbox_t activity_sandbox_t;
-
-struct activity_sandbox_t {
-    WINDOW* redwin;
-};
-
-activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx) {
-  activity_t* activity = malloc(sizeof(activity_t));
-
-  activity->ctx = ctx;
-  activity->next = NULL;
-  activity->prev = prev;
-  activity->type = ACTIVITY_TYPE_SANDBOX;
-  activity->phase = ACTIVITY_PHASE_ACTIVE;
-  activity->details = malloc(sizeof(activity_sandbox_t));
-
-  if (prev != NULL) {
-    prev->next = activity;
-  }
-
-  return activity;
+int activity_get_phase(activity_t* activity) {
+  return activity->phase;
 }
 
-void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
-  char msg[80];
-  sprintf(msg, "RESIX %dx%d\n\r", rows, cols);
-  bkgdset(COLOR_PAIR(MY_PAIR_DESKTOP));
-  bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
+activity_t* activity_get_prev(activity_t* activity) {
+  return activity->prev;
+}
 
-  refresh();
+activity_t* activity_get_next(activity_t* activity) {
+  return activity->next;
+}
 
-  WINDOW* win = ((activity_sandbox_t*)(activity->details))->redwin;
-  delwin(win);
+//
+// Protected methods
+//
+void* _activity_get_details(activity_t* activity) {
+  return activity->details;
+}
 
-  win = newwin(15, 37, 2, 10);
-  ((activity_sandbox_t*)(activity->details))->redwin = win;
+void _activity_discharge(activity_t* activity) {
+  activity->phase = ACTIVITY_PHASE_COMPLETE;
+}
 
-  wbkgdset(win, COLOR_PAIR(MY_PAIR_ALERT));
+//
+// All child implementations:
+// 
+// But:
+// 1. declare regular c-tors for use from program, tests
+//    and factory methods bellow
+// 2. define protected factory methods _activity_create_next_* 
+//
+activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx);
+activity_t* activity_selectbook_ctor(activity_t* prev, ctx_t* ctx);
+activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx);
 
-  wbkgd(win, COLOR_PAIR(MY_PAIR_ALERT));
-  wrefresh(win);
-  // box(win, 0, 0);
+void _activity_create_next_sandbox(activity_t* activity) {
+  activity->next = activity_sandbox_ctor(activity, activity->ctx);
+    activity->phase = ACTIVITY_PHASE_BACKGROUND;
+}
 
-  mvwprintw(win, 0, 1, "Greeter");
-  mvwprintw(win, 1, 1, "Hello");
-  waddstr(win, msg);
+void _activity_create_next_selectbook(activity_t* activity) {
+  activity->next = activity_selectbook_ctor(activity, activity->ctx);
+  activity->phase = ACTIVITY_PHASE_BACKGROUND;
+}
 
-  // refreshing the window
-  wrefresh(win);
+#include "activity_sandbox.c"
+#include "activity_welcome.c"
+#include "activity_selectbook.c"
+
+//
+// Abstract methods switching to appropriate implementations
+//
+void virtual_activity_dtor(activity_t* activity) {
+  if (activity->prev != NULL) {
+    activity->prev->next = NULL;
+  }
+
+  if (activity->type == ACTIVITY_TYPE_SANDBOX) {
+    activity_sandbox_dtor(activity->details);
+  }
   
+  free(activity);
 }
-
-void activity_sandbox_on_keypress(activity_t* activity, int key) {
-
-  WINDOW* win = ((activity_sandbox_t*)(activity->details))->redwin;
-  wattron(win, COLOR_PAIR(MY_PAIR_LABEL));
-  char msg[80];
-  sprintf(msg, "sb %d,\n\r", key);
-  waddstr(win, msg);
-
-	wrefresh(win);
-
-  if (key == 27) {
-    sprintf(msg, "Exiting book sandbox %d", key);
-    activity->phase = ACTIVITY_PHASE_COMPLETE;
-    wbkgd(stdscr, COLOR_PAIR(MY_PAIR_LABEL));
-  }
-}
-
-// Welcome 
-activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx) {
-  activity_t* activity = malloc(sizeof(activity_t));
-
-  activity->ctx = ctx;
-  activity->next = NULL;
-  activity->prev = prev;
-  activity->type = ACTIVITY_TYPE_WELCOME;
-  activity->phase = ACTIVITY_PHASE_ACTIVE;
-
-  if (prev != NULL) {
-    prev->next = activity;
-  }
-
-  return activity;
-}
-
-void activity_welcome_on_resize(activity_t* activity, int rows, int cols) {
-  char msg[80];
-  sprintf(msg, "RESIX %dx%d\n\r", rows, cols);
-  addstr(msg);
-	refresh();
-}
-
-void activity_welcome_on_keypress(activity_t* activity, int key) {
-
-  wattron(stdscr, COLOR_PAIR(MY_PAIR_WRONG));
-  char msg[80];
-  sprintf(msg, "%d,\n\r", key);
-  addstr(msg);
-  wattroff(stdscr, COLOR_PAIR(MY_PAIR_WRONG));
-
-	refresh();
-
-  if ((key == 10) || (key == 13)) {
-    activity->next = activity_selectbook_ctor(activity, activity->ctx);
-    activity->phase = ACTIVITY_PHASE_BACKGROUND;
-  }
-  if (key == 's') {
-    activity->next = activity_sandbox_ctor(activity, activity->ctx);
-    activity->phase = ACTIVITY_PHASE_BACKGROUND;
-  }
-}
-
-/// SelectBook //////// 
-activity_t* activity_selectbook_ctor(activity_t* prev, ctx_t* ctx) {
-  activity_t* activity = malloc(sizeof(activity_t));
-
-  activity->ctx = ctx;
-  activity->next = NULL;
-  activity->prev = prev;
-  activity->type = ACTIVITY_TYPE_SELECTBOOK;
-  activity->phase = ACTIVITY_PHASE_ACTIVE;
-
-  if (prev != NULL) {
-    prev->next = activity;
-  }
-
-  return activity;
-}
-
-void activity_selectbook_on_resize(activity_t* activity, int rows, int cols) {
-  char msg[80];
-  sprintf(msg, "ACT Select book: rows = %d; cols = %d\n\r", rows, cols);
-  addstr(msg);
-	refresh();
-}
-
-void activity_selectbook_on_keypress(activity_t* activity, int key) {
-  wattron(stdscr, COLOR_PAIR(MY_PAIR_DONE));
-  char msg[80];
-  sprintf(msg, "select-book key = %d\n\r", key);
-  addstr(msg);
-  wattron(stdscr, COLOR_PAIR(MY_PAIR_DONE));
-
-  if (key == 27) {
-    sprintf(msg, "Exiting book selection %d", key);
-    activity->phase = ACTIVITY_PHASE_COMPLETE;
-
-    const bookinfo_t* allbooks = get_all_books();
-
-    wattron(stdscr, COLOR_PAIR(MY_PAIR_MENU_SELECTED_HI));
-    int i = 0;
-    int n = NUMBER_OF_BOOKS;
-    for (i = 0; i < n; i++) {
-      const bookinfo_t book = allbooks[i];
-      char msg[20];
-      sprintf(msg, "%d - %s", i+1, book.title);
-      addstr(msg);
-    }
-    wattroff(stdscr, COLOR_PAIR(MY_PAIR_MENU_SELECTED_HI));
-  }
-	refresh();
-}
-
-// Absract methods
 
 void virtual_activity_on_resize(activity_t* activity, int rows, int cols) {
   char ch[80];
@@ -231,7 +120,6 @@ void virtual_activity_on_resize(activity_t* activity, int rows, int cols) {
   }
 }
 
-
 void virtual_activity_on_keypress(activity_t* activity, int key) {
   char ch[80];
   switch (activity->type) {
@@ -250,4 +138,3 @@ void virtual_activity_on_keypress(activity_t* activity, int key) {
       break;
   }
 }
-

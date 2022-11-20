@@ -45,15 +45,15 @@ const curses = (ctx) => {
   }
 
   const js_curses_curs_off = () => {
-    ctx.term.write(ansi.cursor.hide);
+    ctx.term.write(ansi.cursor.hide)
   }
 
   const js_curses_resize_screen = (nrows, ncols) => {
-    console.log("js_curses_resize_screen how can it be?");
+    console.log("js_curses_resize_screen how can it be?")
   }
 
   const js_curses_gotoyx = (row, col) => {
-    ctx.term.write(ansi.cursor.position(row, col))
+    ctx.term.write(ansi.cursor.position(row+1, col+1))
   }
 
   const js_curses_get_cursor_mode = () => {

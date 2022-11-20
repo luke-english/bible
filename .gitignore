@@ -4,6 +4,7 @@
 /node/dist/
 /src/curses.h
 /obj
+/.vscode/
 **/*.c~
 **/*.h~
 **/*.log

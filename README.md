@@ -5,7 +5,7 @@ this journey with a print of the letters as you type them. This repository
 contains the source code of command line application **Bible**, and the Web
 application allowing to run it in a browser.
 
-## Architecture
+## Technology
 
 This application is unique because it uses the same codebase to compile it to
 two different products:
