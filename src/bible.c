@@ -13,10 +13,15 @@ program_t* program;
 
 __attribute__((used))
 void on_init() {
+  int rows; int cols;
+
+  initscr();
+  noecho();
+
   ctx = ctx_ctor();
   activity_t* activity = activity_welcome_ctor(NULL, ctx);
   program = program_ctor(activity, ctx);
-  
+
   start_color();
 
   init_pair(MY_PAIR_LABEL, COLOR_YELLOW, COLOR_BLACK);
@@ -62,7 +67,6 @@ int main(int argc, char** argv) {
     } else {
       on_keypress(ch);
     }
-
   }
 
 	endwin();

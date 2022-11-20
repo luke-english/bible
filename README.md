@@ -13,18 +13,20 @@ TBA
 
 Build WASM binary:
 
-  docker-compose run wasm
+    docker-compose run wasm
 
 Build JS bundle:
 
-  docker-compose run wasm
+    docker-compose run node
+
+    # To keep it building:
+    docker-compose run node 'npm run watch'
 
 Start local Web server publishing the WASM application
 in a browser:
 
-  docker-compose run web
+    docker-compose run web
 
 Start as a CLI application in a Docker container.
 
-  docker-compose run alpine
-
+    docker-compose run alpine

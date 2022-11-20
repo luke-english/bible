@@ -1,17 +1,21 @@
 #ifdef __EMSCRIPTEN__
+
 #include <emscripten.h>
 #include "zcurses.h"
-EM_JS(int, addstr, (const char*));
-EM_JS(int, waddstr, (void*, const char*));
-EM_JS(void, refresh, ());
-EM_JS(void, start_color, ());
-EM_JS(int, init_pair, (int pair, int bg, int fg));
-EM_JS(void, mvwprintw, (WINDOW*, int, int, const char*));
-EM_JS(void, wrefresh, (void*));
-EM_JS(void, wattroff, (WINDOW*, chtype));
-EM_JS(void, wattron, (WINDOW*, chtype));
-EM_JS(void, wbkgd, (void*, int));
-EM_JS(void, box, (WINDOW*, int, int));
-EM_JS(WINDOW*, newwin, (int, int, int, int));
-EM_JS(void, delwin, (WINDOW*));
+
+EM_JS(int, js_curses_check_key, ());
+EM_JS(void, js_curses_set_char, (int a, int b, int c, int d));
+EM_JS(int, js_curses_get_key, ());
+EM_JS(int, js_curses_get_rows, ());
+EM_JS(int, js_curses_get_cursor_mode, ());
+EM_JS(int, js_curses_get_cols, ());
+EM_JS(void, js_curses_flushinp, ());
+EM_JS(void, js_curses_scr_close, ());
+EM_JS(void, js_curses_scr_open, ());
+EM_JS(void, js_curses_curs_on, ());
+EM_JS(void, js_curses_curs_off, ());
+EM_JS(void, js_curses_simulateinfiniteloop_error, ());
+EM_JS(void, js_curses_resize_screen, (const int nrows, const int ncols));
+EM_JS(void, js_curses_gotoyx, (int,int));
+
 #endif /* EMSCRIPTEN*/

@@ -1,50 +1,62 @@
-import { decode } from './wasmutil.js';
+const curses = (ctx) => {
 
-const curses = (ctx) => ({
-  call_alert: (...param) => {
-    console.log("with param", {param});
-  },
-  waddstr: (win, str) => {},
-  addstr: (str) => {
-    win = 0;
-    const snapshot = new Uint8Array(ctx.buffer)
-    const decoded_str = decode(snapshot, str) 
+  const js_curses_set_char = (ch, row, col, style) => {
+    console.log(`js_curses_set_char()`, {ch, row, col, style});
 
-    let start = '';
-    let end = '';
-    if (ctx.win[win].attr) {
-        const attr = ctx.win[win].attr
-        pair = ctx.pairs[attr >> 8];
-        const fg = pair.fg;
-        const bg = pair.bg == 0 ? 9 : pair.bg;
+    pair = [style >> 8];
+    const fg = style >> 8;
+    const bg = 0;
 
-        start = `\x1B[4${bg};3${fg}m`;
-        end = '\x1B[0m';
-    }
-    ctx.term.write(`${start}${decoded_str}${end}`);
-  },
-  init_pair: (pair, fg, bg) => {
-    ctx.pairs[pair] = { fg, bg };
-  },
-  wattron: (win, attr) => {
-    ctx.win[win].attr |= attr;
-  },
-  wattroff(win, attr) {
-    ctx.win[win].attr &= ~attr;
-  },
-  refresh: () => {},
-  wrefresh: (win) => {},
-  wbkgd: (win, colorPair) => {},
-  delwin: (win) => {},
-  newwin: () => {},
-  box: () => {},
-  mvwprintw: () => {},
-  start_color: () => {
-    ctx.win = [];
-    ctx.pairs = [];
-    ctx.win[0] = { attr: 0 };
+    start = `\x1B[4${bg};3${fg}m`;
+    end = '\x1B[0m';
+    ctx.term.write(`${start}${String.fromCharCode(ch)}${end}`);
   }
-});
+  const js_curses_get_rows = () => {
+    console.log("js_curses_get_rows");
+    return 25;
+  }
+
+  const js_curses_get_cols = () => {
+    console.log("js_curses_get_cols");
+    return 80;
+  }
+
+  const js_curses_curs_on = () => {
+    console.log("js_curses_curs_on");
+  }
+
+  const js_curses_curs_off = () => {
+    console.log("js_curses_curs_off");
+  }
+
+  const js_curses_resize_screen = (nrows, ncols) => {
+    console.log("js_curses_resize_screen");
+  }
+
+  const js_curses_gotoyx = (row, col) => {
+    console.log(`gotoyx(${row}x${col})`);
+  }
+
+  const js_curses_get_cursor_mode = () => {
+    console.log("js_curses_get_cursor_mode");
+  }
+
+  const js_curses_scr_open = () => {
+    console.log("js_curses_scr_open");
+  }
+
+  return {
+    js_curses_set_char,
+    js_curses_get_rows,
+    js_curses_get_cols,
+    js_curses_curs_on,
+    js_curses_curs_off,
+    js_curses_resize_screen,
+    js_curses_gotoyx,
+    js_curses_get_cursor_mode,
+    js_curses_scr_open,
+  };
+}
 
 export { curses };
 
