@@ -39,7 +39,7 @@ services:
     entrypoint: "bash -c"
     command:
       - |
-        /mnt/wasm/build.sh
+        /mnt/wasm/build-wasm.sh
 
     
   web:

@@ -11,11 +11,11 @@ set -o pipefail
 mkdir -p /tmp/obj
 
 emcc /mnt/src/zcurses.c -c \
-  -I /opt/emcurses \
+  -I /opt/pdcurses \
   -o /tmp/obj/zcurses.bc.o
 
 emcc /mnt/src/activity.c -c \
-  -I /opt/emcurses \
+  -I /opt/pdcurses \
   -o /tmp/obj/activity.bc.o
 
 emcc /mnt/src/ctx.c -c \
@@ -33,13 +33,13 @@ emcc \
   -s WASM=1 \
   --minify 0 \
   --no-entry \
-  -I /opt/emcurses \
+  -I /opt/pdcurses \
   /mnt/src/bible.c \
   /tmp/obj/activity.bc.o \
   /tmp/obj/ctx.bc.o \
   /tmp/obj/program.bc.o \
   /tmp/obj/scripture.bc.o \
   /tmp/obj/zcurses.bc.o \
-  /opt/emcurses/emscripten/libpdcurses.so \
+  /opt/pdcurses/wasm/libpdcurses.so \
   -o /mnt/wasm/bible.wasm
 

@@ -23,6 +23,8 @@ const curses = (ctx) => {
     // but it is an edge case.
     // (TODO use different js-curses_* f-ion for default color)
     if (fg == 0 && bg == 0) f = 7;
+    if (fg == -2) f = 7;
+    if (bg == -2) b = 9;
 
     start = `\x1B[4${b};3${f}m`;
     end = '\x1B[0m';
