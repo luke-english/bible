@@ -13,6 +13,10 @@ struct activity_sandbox_t {
     WINDOW* redwin;
 };
 
+
+WINDOW *create_newwin(int height, int width, int starty, int startx);
+void destroy_win(WINDOW *local_win);
+
 activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx) {
   activity_sandbox_t* self = malloc(sizeof(activity_sandbox_t));
 
@@ -27,48 +31,110 @@ void activity_sandbox_dtor(activity_sandbox_t* self) {
   free(self);
 }
 
+int startx, starty, width, height;
+
 void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
   activity_sandbox_t* self = _activity_get_details(activity);
-  char msg[80];
-  sprintf(msg, "RESIX %dx%d\n\r", rows, cols);
-  bkgdset(COLOR_PAIR(MY_PAIR_DESKTOP));
-  bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
+  WINDOW* win = self->redwin;
 
+
+	height = 4;
+	width = 20;
+	starty = (LINES - height) / 2;	/* Calculating for a center placement */
+	startx = (COLS - width) / 2;	/* of the window		*/
+  
+  bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
   refresh();
 
-  WINDOW* win = self->redwin;
-  delwin(win);
-
-  win = newwin(15, 37, 2, 10);
-  self->redwin = win;
-
-  wbkgdset(win, COLOR_PAIR(MY_PAIR_ALERT));
-
-  wbkgd(win, COLOR_PAIR(MY_PAIR_ALERT));
-  wrefresh(win);
-  // box(win, 0, 0);
-
-  mvwprintw(win, 0, 1, "Greeter\n\r");
-  mvwprintw(win, 1, 1, "Hello\n\r");
-  waddstr(win, msg);
-
-  // refreshing the window
-  wrefresh(win);
+	self->redwin = create_newwin(height, width, starty, startx);
 }
 
 void activity_sandbox_on_keypress(activity_t* activity, int key) {
   activity_sandbox_t* self = _activity_get_details(activity);
   WINDOW* win = self->redwin;
+
+  // print pressed key
   wattron(win, COLOR_PAIR(MY_PAIR_LABEL));
   char msg[80];
-  sprintf(msg, "sb %d,\n\r", key);
+  sprintf(msg, "sb_%d,\n\r", key);
   waddstr(win, msg);
+  wattroff(win, COLOR_PAIR(MY_PAIR_LABEL));
 
 	wrefresh(win);
 
-  if (key == 27) {
-    sprintf(msg, "Exiting book sandbox %d", key);
-    _activity_discharge(activity);
-    wbkgd(stdscr, COLOR_PAIR(MY_PAIR_LABEL));
+ if (key == 'h') {
+    destroy_win(win);
+
+    touchwin(stdscr);
+    bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
+    refresh();
+
+    startx--;
+    self->redwin = create_newwin(height, width, starty, startx);
   }
+  if (key == 'k') {
+    destroy_win(win);
+
+    touchwin(stdscr);
+    bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
+    refresh();
+
+    starty--;
+    self->redwin = create_newwin(height, width, starty, startx);
+  }
+  if (key == 'j') {
+    destroy_win(win);
+
+    touchwin(stdscr);
+    bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
+    refresh();
+
+    starty++;
+    self->redwin = create_newwin(height, width, starty, startx);
+  }
+  if (key == 'l') {
+    destroy_win(win);
+
+    touchwin(stdscr);
+    bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
+    refresh();
+
+    startx++;
+    self->redwin = create_newwin(height, width, starty, startx);
+  }
+  if (key == 27) {
+    _activity_discharge(activity);
+    destroy_win(win);
+
+    touchwin(stdscr);
+    refresh();
+  }
+}
+
+WINDOW *create_newwin(int height, int width, int starty, int startx)
+{
+  WINDOW *local_win;
+
+	local_win = newwin(height, width, starty, startx);
+  wbkgd(local_win, COLOR_PAIR(MY_PAIR_ALERT));
+	// box(local_win, 0 , 0);
+  wborder(local_win, '|', '|', '-', '-', '+', '+', '+', '+');
+
+
+
+  wattron(local_win, COLOR_PAIR(MY_PAIR_LABEL));
+  char msg[80];
+  sprintf(msg, "sb,\n\r");
+  waddstr(local_win, msg);
+  wattroff(local_win, COLOR_PAIR(MY_PAIR_LABEL));
+
+	wrefresh(local_win);
+
+	return local_win;
+}
+
+void destroy_win(WINDOW *local_win)
+{	
+	wrefresh(local_win);
+	delwin(local_win);
 }
