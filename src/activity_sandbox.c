@@ -117,10 +117,9 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
 
 	local_win = newwin(height, width, starty, startx);
   wbkgd(local_win, COLOR_PAIR(MY_PAIR_ALERT));
-	// box(local_win, 0 , 0);
+  
+	box(local_win, 0 , 0);
   wborder(local_win, '|', '|', '-', '-', '+', '+', '+', '+');
-
-
 
   wattron(local_win, COLOR_PAIR(MY_PAIR_LABEL));
   char msg[80];

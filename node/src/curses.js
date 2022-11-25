@@ -26,15 +26,20 @@ const curses = (ctx) => {
     if (fg == -2) f = 7;
     if (bg == -2) b = 9;
 
+
+    ctx.term.write(ansi.cursor.position(row+1, col+1))
+
     start = `\x1B[4${b};3${f}m`;
     end = '\x1B[0m';
     ctx.term.write(`${start}${String.fromCharCode(ch)}${end}`);
 
-    console.log(`js_curses_set_char(`
-      + `${String.fromCharCode(ch)}(${ch}) ${row}x${col} `
-      + `fg:${fg}->${f} bg:${bg}->${b}`);
+    // console.log(`js_curses_set_char(`
+    //   + `${String.fromCharCode(ch)}(${ch}) ${row}x${col} `
+    //   + `fg:${fg}->${f} bg:${bg}->${b}`);
   }
   const js_curses_get_rows = () => {
+    console.log("get_rows ctx.term.rows", ctx.term.rows)
+
     return ctx.term.rows;
   }
 
