@@ -2,19 +2,22 @@ import ansi from 'ansi-escape-sequences'
 
 const curses = (ctx) => {
 
-  const js_curses_set_char = (ch, row, col, fg, bg) => {
-    // Terminal colors:
-    // 0 Black  2 Green   4 Blue     6 Cyan    
-    // 1 Red    3 Yellow  5 Magenta  7 White   
-    //
-    // 9 Color at startup
-    
-    // For some reason PDCurses returns colors mixed
-    // Curses:     0  1  2  3  4  5  6  7  8      Actual values:
-    const fMap = [ 7, 4, 2, 3, 4, 5, 3, 7, 8 ] // Foreground
-    const bMap = [ 9, 1, 2, 3, 1, 5, 3, 7, 8 ] // Background
+  // Terminal colors:
+  // 0 Black  2 Green   4 Blue     6 Cyan    
+  // 1 Red    3 Yellow  5 Magenta  7 White   
+  //
+  // 9 Color at startup
+  
+  // For some reason PDCurses returns colors mixed
+  // Curses:     0  1  2  3  4  5  6  7  8      Actual values:
+  const fMap = [ 0, 4, 2, 3, 4, 5, 3, 7, 8 ] // Foreground
+  const bMap = [ 9, 1, 2, 3, 1, 5, 3, 7, 8 ] // Background
 
-    // "Corrected" values:
+  const _get_color_ansi_code_fragments = (fg, bg) => {
+
+    // console.log(`_get_color_ansi_code_fragments(`
+    //   + `fg:${fg}->${f} bg:${bg}->${b}`);
+
     let b = bMap[bg]
     let f = fMap[fg]
 
@@ -22,21 +25,52 @@ const curses = (ctx) => {
     // which is probably wrong when domebody has pair black-on-black
     // but it is an edge case.
     // (TODO use different js-curses_* f-ion for default color)
-    if (fg == 0 && bg == 0) f = 7;
-    if (fg == -2) f = 7;
-    if (bg == -2) b = 9;
+    if (fg == 0 && bg == 0) {
+      return {start: '', end: ''}
+    }
+    if (fg == -1 && bg == -1) {
+      return {start: '', end: ''}
+    }
+    if (fg == -1) f = 7;
+    if (bg == -1) b = 9;
 
-
-    ctx.term.write(ansi.cursor.position(row+1, col+1))
-
+    if (b === undefined) console.error("undefined bg val:", bg);
+    if (f === undefined) console.error("undefined fg val:", fg);
     start = `\x1B[4${b};3${f}m`;
     end = '\x1B[0m';
-    ctx.term.write(`${start}${String.fromCharCode(ch)}${end}`);
-
-    // console.log(`js_curses_set_char(`
-    //   + `${String.fromCharCode(ch)}(${ch}) ${row}x${col} `
-    //   + `fg:${fg}->${f} bg:${bg}->${b}`);
+    return {start, end}
   }
+
+  const js_curses_set_char = (ch, row, col, fg, bg) => {
+    // const { start, end } = _get_color_ansi_code_fragments(fg, bg);
+
+    // ctx.term.write(ansi.cursor.position(row+1, col+1))
+    // ctx.term.write(start + String.fromCharCode(ch) + end);
+  }
+
+  const js_curses_transform_line = (row, col, len, str, fg, bg) => {
+    ctx.term.write(ansi.cursor.position(row+1, col+1))
+
+    // Decode a string from memory starting at address base.
+    const decode = (memory, base, len) => {
+      let cursor = base;
+      const bytes = []
+
+      while (cursor < base+len) {
+        const b = memory[cursor++];
+        bytes.push(b);
+      }
+
+      const enc = new TextDecoder()
+      return enc.decode(new Uint8Array(bytes));
+    };
+    const snapshot = new Uint8Array(ctx.buffer);
+    const value = decode(snapshot, str, len)
+
+    const { start, end } = _get_color_ansi_code_fragments(fg, bg);
+    ctx.term.write(start + value + end);
+  }
+
   const js_curses_get_rows = () => {
     console.log("get_rows ctx.term.rows", ctx.term.rows)
 
@@ -83,6 +117,7 @@ const curses = (ctx) => {
     js_curses_gotoyx,
     js_curses_get_cursor_mode,
     js_curses_scr_open,
+    js_curses_transform_line
   };
 }
 

@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <locale.h>
+
 
 #include "program.h"
 #include "ctx.h"
@@ -15,6 +17,7 @@ __attribute__((used))
 void on_init() {
   int rows; int cols;
 
+  setlocale(LC_ALL, "");
   initscr();
   noecho();
 
@@ -49,9 +52,6 @@ int on_keypress(int key) {
 #ifndef __EMSCRIPTEN__
 int main(int argc, char** argv) {
   int rows; int cols;
-
-	initscr();
-  noecho();
 
   on_init();
   getmaxyx(stdscr, rows, cols);

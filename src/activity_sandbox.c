@@ -13,7 +13,6 @@ struct activity_sandbox_t {
     WINDOW* redwin;
 };
 
-
 WINDOW *create_newwin(int height, int width, int starty, int startx);
 void destroy_win(WINDOW *local_win);
 
@@ -45,7 +44,7 @@ void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
   
   bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
   refresh();
-
+  curs_set(0);
 	self->redwin = create_newwin(height, width, starty, startx);
 }
 
@@ -104,6 +103,7 @@ void activity_sandbox_on_keypress(activity_t* activity, int key) {
   }
   if (key == 27) {
     _activity_discharge(activity);
+    curs_set(1);
     destroy_win(win);
 
     touchwin(stdscr);
@@ -117,14 +117,14 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
 
 	local_win = newwin(height, width, starty, startx);
   wbkgd(local_win, COLOR_PAIR(MY_PAIR_ALERT));
-  
-	box(local_win, 0 , 0);
+
+	// box(local_win, 0 , 0);
   wborder(local_win, '|', '|', '-', '-', '+', '+', '+', '+');
 
   wattron(local_win, COLOR_PAIR(MY_PAIR_LABEL));
   char msg[80];
-  sprintf(msg, "sb,\n\r");
-  waddstr(local_win, msg);
+  char aleph[4] = "א";
+  wprintw(local_win, "(🍔)%s,\n\r", aleph);
   wattroff(local_win, COLOR_PAIR(MY_PAIR_LABEL));
 
 	wrefresh(local_win);
