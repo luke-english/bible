@@ -48,6 +48,7 @@ fetch("./wasm/bible.wasm")
   .then((module) => {
     ctx.buffer = module.instance.exports.memory.buffer;
     ctx.term = createTerminal();
+    ctx.term.focus();
 
     ctx.term.onResize(({ cols, rows }) => {
       module.instance.exports.on_resize(rows, cols);

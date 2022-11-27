@@ -2,6 +2,20 @@ import ansi from 'ansi-escape-sequences'
 
 const curses = (ctx) => {
 
+  // Decode a string from memory starting at address base.
+  const decode_n = (memory, base, len) => {
+    let cursor = base;
+    const bytes = []
+
+    while (cursor < base+len) {
+      const b = memory[cursor++];
+      bytes.push(b);
+    }
+
+    const enc = new TextDecoder()
+    return enc.decode(new Uint8Array(bytes));
+  };
+
   // Terminal colors:
   // 0 Black  2 Green   4 Blue     6 Cyan    
   // 1 Red    3 Yellow  5 Magenta  7 White   
@@ -50,27 +64,10 @@ const curses = (ctx) => {
   }
 
   const js_curses_transform_line = (row, col, len, str, fg, bg) => {
-    // len = len * 2;
     ctx.term.write(ansi.cursor.position(row+1, col+1))
 
-    // Decode a string from memory starting at address base.
-    const decode = (memory, base, len) => {
-      let cursor = base;
-      const bytes = []
-
-      while (cursor < base+len) {
-        const b = memory[cursor++];
-        bytes.push(b);
-      }
-
-      console.log({bytes, memory})
-      const enc = new TextDecoder()
-      return enc.decode(new Uint8Array(bytes));
-    };
     const snapshot = new Uint8Array(ctx.buffer);
-    const value = decode(snapshot, str, len);
-
-    console.log(`transform_line(${row}x${col}, #${value} ""[${len}]", ${fg}:${bg}`);
+    const value = decode_n(snapshot, str, len);
 
     const { start, end } = _get_color_ansi_code_fragments(fg, bg);
     ctx.term.write(start + value + end);

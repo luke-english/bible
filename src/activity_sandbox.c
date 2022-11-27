@@ -36,7 +36,6 @@ void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
   activity_sandbox_t* self = _activity_get_details(activity);
   WINDOW* win = self->redwin;
 
-
 	height = 4;
 	width = 20;
 	starty = (LINES - height) / 2;	/* Calculating for a center placement */
@@ -104,7 +103,6 @@ void activity_sandbox_on_keypress(activity_t* activity, int key) {
   if (key == 27) {
     _activity_discharge(activity);
     curs_set(1);
-    destroy_win(win);
 
     touchwin(stdscr);
     refresh();
