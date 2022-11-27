@@ -43,12 +43,14 @@ const curses = (ctx) => {
 
   const js_curses_set_char = (ch, row, col, fg, bg) => {
     // const { start, end } = _get_color_ansi_code_fragments(fg, bg);
+    // console.log({ch})
 
     // ctx.term.write(ansi.cursor.position(row+1, col+1))
     // ctx.term.write(start + String.fromCharCode(ch) + end);
   }
 
   const js_curses_transform_line = (row, col, len, str, fg, bg) => {
+    // len = len * 2;
     ctx.term.write(ansi.cursor.position(row+1, col+1))
 
     // Decode a string from memory starting at address base.
@@ -61,11 +63,14 @@ const curses = (ctx) => {
         bytes.push(b);
       }
 
+      console.log({bytes, memory})
       const enc = new TextDecoder()
       return enc.decode(new Uint8Array(bytes));
     };
     const snapshot = new Uint8Array(ctx.buffer);
-    const value = decode(snapshot, str, len)
+    const value = decode(snapshot, str, len);
+
+    console.log(`transform_line(${row}x${col}, #${value} ""[${len}]", ${fg}:${bg}`);
 
     const { start, end } = _get_color_ansi_code_fragments(fg, bg);
     ctx.term.write(start + value + end);
