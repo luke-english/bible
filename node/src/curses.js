@@ -12,46 +12,79 @@ const curses = (ctx) => {
     while (cursor < base+len) {
       const b1 = memory[cursor++];
       const b2 = memory[cursor++];
+
       const b3 = memory[cursor+1];
       const b4 = memory[cursor+2];
+      
 
-      console.log(`orig ${b1} ${b2} ${b3} ${b4}`)
 
-
-      if ((b2 & 0b1111_1000) != b2) {
+      if ((b2 > 0) && (b2 < 8)) {
         // console.log(`2B`)
 
         const y1 = (b2 >> 2) & 1;
         const y2 = (b2 >> 1) & 1;
-        const y3 = b2 & 1;
+        const y3 = (b2 >> 0) & 1;
+
         const y4 = (b1 >> 7) & 1;
         const y5 = (b1 >> 6) & 1;
-
         const x1 = (b1 >> 5) & 1;
         const x2 = (b1 >> 4) & 1;
         const x3 = (b1 >> 3) & 1;
         const x4 = (b1 >> 2) & 1;
         const x5 = (b1 >> 1) & 1;
-        const x6 = (b1) & 1;
+        const x6 = (b1 >> 0) & 1;
 
         const a = 0b11000000 + y1*16 + y2*8  + y3*4 + y4*2 + y5*1;
         const z = 0b10000000 + x1*32 + x2*16 + x3*8 + x4*4 + x5*2 + x6*1
 
         bytes.push(a); // 2 bytes
         bytes.push(z);
+
         continue;
       }
       else if ((b1 & 0b1000_0000) != b1) {
-        // console.log(`1B`)
+        if (b2 == 0) {
+          // Support for "simple" 1 byte characters
+          bytes.push(0);
+          continue;
+        } else {
+          // support for 3 byte characters
+          // their unicode value is less than 0xFFFF
+          // Which is a lot of emojis: http://unicode.org/Public/emoji/5.0/emoji-data.txt
 
-        bytes.push(b1); // 1 byte
-        bytes.push(0);
-        continue;
+          const z1 = (b2 >> 7) & 1;
+          const z2 = (b2 >> 6) & 1;
+          const z3 = (b2 >> 5) & 1;
+          const z4 = (b2 >> 4) & 1;
+          const y1 = (b2 >> 3) & 1;
+          const y2 = (b2 >> 2) & 1;
+          const y3 = (b2 >> 1) & 1;
+          const y4 = (b2 >> 0) & 1;
+
+          const y5 = (b1 >> 7) & 1;
+          const y6 = (b1 >> 6) & 1;
+          const x1 = (b1 >> 5) & 1;
+          const x2 = (b1 >> 4) & 1;
+          const x3 = (b1 >> 3) & 1;
+          const x4 = (b1 >> 2) & 1;
+          const x5 = (b1 >> 1) & 1;
+          const x6 = (b1 >> 0) & 1;
+
+          const z = 0b11100000 + z1*8 + z2*4 + z3*2 + z4*1;
+          const y = 0b10000000 + y1*32 + y2*16 + y3*8 + y4*4 + y5*2 + y6*1;
+          const x = 0b10000000 + x1*32 + x2*16 + x3*8 + x4*4 + x5*2 + x6*1;
+          
+          bytes.push(z);
+          bytes.push(y);
+          bytes.push(x);
+
+          continue;
+        }
       }
       else {
         const b3 = memory[cursor++];
         const b4 = memory[cursor++];
-        console.log(`orig ${b1} ${b2} ${b3} ${b4}`)
+        // console.log(`orig ${b1} ${b2} ${b3} ${b4}`)
 
         bytes.push("X".charCodeAt(0)); // 1
         bytes.push(0);
@@ -66,7 +99,7 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
 */
 
     }
-    console.log(`bytes;`, bytes);
+    // console.log(`bytes;`, bytes);
 
     const enc = new TextDecoder()
     return enc.decode(new Uint8Array(bytes));
@@ -120,7 +153,10 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
   }
 
   const js_curses_transform_line = (row, col, len, str, fg, bg) => {
+    
     len *= 2;
+    // len *= 2;
+
     ctx.term.write(ansi.cursor.position(row+1, col+1))
 
     const snapshot = new Uint8Array(ctx.buffer);

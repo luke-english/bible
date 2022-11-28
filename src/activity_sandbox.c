@@ -116,13 +116,15 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
 	local_win = newwin(height, width, starty, startx);
   wbkgd(local_win, COLOR_PAIR(MY_PAIR_ALERT));
 
-	box(local_win, 0 , 0);  
-  // wborder(local_win, '|', '|', '-', '-', '+', '+', '+', '+');
+	// box(local_win, 0 , 0);  
+  wborder(local_win, '|', '|', '-', '-', '+', '+', '+', '+');
 
   wattron(local_win, COLOR_PAIR(MY_PAIR_LABEL));
   char msg[80];
   char aleph[5] = "א";
   char ltu[4] = "ė";
+
+  mvwaddstr(local_win, 2, 2, "  ⚡ flash");
   mvwaddstr(local_win, 3, 2, "  ė lithuanian");
   mvwaddstr(local_win, 4, 2, "  א hebrew");
 
