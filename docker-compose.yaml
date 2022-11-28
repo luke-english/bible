@@ -41,7 +41,6 @@ services:
       - |
         /mnt/wasm/build-wasm.sh
 
-    
   web:
     image: nginx
     volumes:

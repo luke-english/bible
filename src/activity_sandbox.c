@@ -36,7 +36,7 @@ void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
   activity_sandbox_t* self = _activity_get_details(activity);
   WINDOW* win = self->redwin;
 
-	height = 4;
+	height = 6;
 	width = 20;
 	starty = (LINES - height) / 2;	/* Calculating for a center placement */
 	startx = (COLS - width) / 2;	/* of the window		*/
@@ -116,26 +116,16 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
 	local_win = newwin(height, width, starty, startx);
   wbkgd(local_win, COLOR_PAIR(MY_PAIR_ALERT));
 
-	// box(local_win, 0 , 0);  
-  wborder(local_win, '|', '|', '-', '-', '+', '+', '+', '+');
+	box(local_win, 0 , 0);  
+  // wborder(local_win, '|', '|', '-', '-', '+', '+', '+', '+');
 
   wattron(local_win, COLOR_PAIR(MY_PAIR_LABEL));
   char msg[80];
   char aleph[5] = "א";
   char ltu[4] = "ė";
-  char burger[45] = "🍔";
-  char unicorn[45] = "🦄";
-  mvwaddstr(local_win, 1, 2, "  burger");
-  mvwaddstr(local_win, 2, 2, "  unicorn");
+  mvwaddstr(local_win, 3, 2, "  ė lithuanian");
+  mvwaddstr(local_win, 4, 2, "  א hebrew");
 
-  // This refresh is needed if we want to write multibyte characters without
-  // distorting surrounding code
-  wrefresh(local_win);
-
-  // After refresh all this will be applied on top
-  mvwaddstr(local_win, 1, 1, burger);
-  mvwaddstr(local_win, 2, 1, unicorn);
- 
   wattroff(local_win, COLOR_PAIR(MY_PAIR_LABEL));
 
 	wrefresh(local_win);

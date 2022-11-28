@@ -7,10 +7,66 @@ const curses = (ctx) => {
     let cursor = base;
     const bytes = []
 
+    // This parsing is done based on:
+    // http://www.readytext.co.uk/?p=1284
     while (cursor < base+len) {
-      const b = memory[cursor++];
-      bytes.push(b);
+      const b1 = memory[cursor++];
+      const b2 = memory[cursor++];
+      const b3 = memory[cursor+1];
+      const b4 = memory[cursor+2];
+
+      console.log(`orig ${b1} ${b2} ${b3} ${b4}`)
+
+
+      if ((b2 & 0b1111_1000) != b2) {
+        // console.log(`2B`)
+
+        const y1 = (b2 >> 2) & 1;
+        const y2 = (b2 >> 1) & 1;
+        const y3 = b2 & 1;
+        const y4 = (b1 >> 7) & 1;
+        const y5 = (b1 >> 6) & 1;
+
+        const x1 = (b1 >> 5) & 1;
+        const x2 = (b1 >> 4) & 1;
+        const x3 = (b1 >> 3) & 1;
+        const x4 = (b1 >> 2) & 1;
+        const x5 = (b1 >> 1) & 1;
+        const x6 = (b1) & 1;
+
+        const a = 0b11000000 + y1*16 + y2*8  + y3*4 + y4*2 + y5*1;
+        const z = 0b10000000 + x1*32 + x2*16 + x3*8 + x4*4 + x5*2 + x6*1
+
+        bytes.push(a); // 2 bytes
+        bytes.push(z);
+        continue;
+      }
+      else if ((b1 & 0b1000_0000) != b1) {
+        // console.log(`1B`)
+
+        bytes.push(b1); // 1 byte
+        bytes.push(0);
+        continue;
+      }
+      else {
+        const b3 = memory[cursor++];
+        const b4 = memory[cursor++];
+        console.log(`orig ${b1} ${b2} ${b3} ${b4}`)
+
+        bytes.push("X".charCodeAt(0)); // 1
+        bytes.push(0);
+        continue;
+      }
+
+/*
+enc.encode('🍔')  [240, 159, 141, 148, ] orig 230 7
+enc.encode('א')  [215, 144, ]            orig 208 5
+enc.encode('ė')  [196, 151,] .           orig 23 1
+enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
+*/
+
     }
+    console.log(`bytes;`, bytes);
 
     const enc = new TextDecoder()
     return enc.decode(new Uint8Array(bytes));
@@ -64,10 +120,13 @@ const curses = (ctx) => {
   }
 
   const js_curses_transform_line = (row, col, len, str, fg, bg) => {
+    len *= 2;
     ctx.term.write(ansi.cursor.position(row+1, col+1))
 
     const snapshot = new Uint8Array(ctx.buffer);
     const value = decode_n(snapshot, str, len);
+
+    console.log(`transform_line(${len});`);
 
     const { start, end } = _get_color_ansi_code_fragments(fg, bg);
     ctx.term.write(start + value + end);
