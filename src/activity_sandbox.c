@@ -36,7 +36,7 @@ void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
   activity_sandbox_t* self = _activity_get_details(activity);
   WINDOW* win = self->redwin;
 
-	height = 6;
+	height = 10;
 	width = 20;
 	starty = (LINES - height) / 2;	/* Calculating for a center placement */
 	startx = (COLS - width) / 2;	/* of the window		*/
@@ -120,19 +120,21 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
   wborder(local_win, '|', '|', '-', '-', '+', '+', '+', '+');
 
   wattron(local_win, COLOR_PAIR(MY_PAIR_LABEL));
-  char msg[80];
-  char aleph[5] = "א";
-  char ltu[4] = "ė";
 
-  mvwaddstr(local_win, 1, 2, "🍔 hamburger");
-  mvwaddstr(local_win, 2, 2, "⚡ flash");
-  mvwaddstr(local_win, 3, 2, "ė lithuanian");
-  mvwaddstr(local_win, 4, 2, "א hebrew");
-
-  wattroff(local_win, COLOR_PAIR(MY_PAIR_LABEL));
-
+  // Emojis are tricky still it is unclear what is the width of some
+  // Printing them separately, and leavinig some trailing space
+  // might help.
+  mvwaddstr(local_win, 1, 2, "🍔  "); mvwaddstr(local_win, 1, 4, "hamburger");
+  mvwaddstr(local_win, 2, 2, "⚡  "); mvwaddstr(local_win, 2, 4, "flash");
+  mvwaddstr(local_win, 3, 2, "ė  ");  mvwaddstr(local_win, 3, 4, "lithuanian");
+  mvwaddstr(local_win, 4, 2, "א  ");  mvwaddstr(local_win, 4, 4, "hebrew");
+  mvwaddstr(local_win, 5, 2, "🥸  "); mvwaddstr(local_win, 5, 4, "ugly face");
+  mvwaddstr(local_win, 6, 2, "🍀  "); mvwaddstr(local_win, 6, 4, "clover");
+  mvwaddstr(local_win, 7, 2, "🐠 "); mvwaddstr(local_win, 7, 4, "fish");
+  mvwaddstr(local_win, 8, 2, "🦄  "); mvwaddstr(local_win, 8, 4, "unicorn");
 	wrefresh(local_win);
 
+  wattroff(local_win, COLOR_PAIR(MY_PAIR_LABEL));
 	return local_win;
 }
 

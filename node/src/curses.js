@@ -48,12 +48,30 @@ const curses = (ctx) => {
         continue;
       } 
       else if (b2 < 0b0010_0000) { // Four byte char /////////////////////
-        cursor += 2;
+        const www = (b2 & 0b0001_1100) >> 2;
+        const zz = (b2 & 0b0000_0011) << 4;
 
-        console.log(`orig ${b1} ${b2} ${b1_} ${b2_}`)
+        const zzzz = (b1 & 0b1111_0000) >> 4;
+        const yyyy = (b1 & 0b0000_1111) << 2;
 
-        bytes.push("4".charCodeAt(0));
-        bytes.push("4".charCodeAt(0));
+        const yy = (b1_ &  0b1100_0000) >> 6;
+        const xxxxxx = (b1_ & 0b0011_1111) << 0;
+
+        const w = 0b1111_0000 | www;
+        const z = 0b1000_0000 | zz | zzzz;
+        const y = 0b1000_0000 | yyyy | yy;
+        const x = 0b1000_0000 | xxxxxx;
+
+
+        bytes.push(w,z,y,x);
+
+        /* hack requied for some emojis */
+        {
+          len++;
+          cursor += 2;
+          bytes.push(" ".charCodeAt(0));  
+        }
+
         continue;
       }
       else if (b2 < 0b0100_0000) { // Three byte chare ////////////////////
@@ -80,10 +98,7 @@ const curses = (ctx) => {
         const y = 0b10000000 + y1*32 + y2*16 + y3*8 + y4*4 + y5*2 + y6*1;
         const x = 0b10000000 + x1*32 + x2*16 + x3*8 + x4*4 + x5*2 + x6*1;
         
-        bytes.push(z);
-        bytes.push(y);
-        bytes.push(x);
-
+        bytes.push(z, y, x);
         continue;
       }
 
