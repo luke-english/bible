@@ -10,16 +10,21 @@ const curses = (ctx) => {
     // This parsing is done based on:
     // http://www.readytext.co.uk/?p=1284
     while (cursor < base+len) {
+
       const b1 = memory[cursor++];
       const b2 = memory[cursor++];
 
-      const b3 = memory[cursor+1];
-      const b4 = memory[cursor+2];
-      
+      const b1_ = memory[cursor+1];
+      const b2_ = memory[cursor+2];
 
+      if (b2 == 0) { // One byte char ////////////////////////////////////
 
-      if ((b2 > 0) && (b2 < 8)) {
-        // console.log(`2B`)
+        bytes.push(b1);
+
+        continue;
+      }
+      if (false) {}
+      else if (b2 < 0b0000_1000 && b1_ == 0) { // Two byte char //////////
 
         const y1 = (b2 >> 2) & 1;
         const y2 = (b2 >> 1) & 1;
@@ -41,53 +46,44 @@ const curses = (ctx) => {
         bytes.push(z);
 
         continue;
+      } 
+      else if (b2 < 0b0010_0000) { // Four byte char /////////////////////
+        cursor += 2;
+
+        console.log(`orig ${b1} ${b2} ${b1_} ${b2_}`)
+
+        bytes.push("4".charCodeAt(0));
+        bytes.push("4".charCodeAt(0));
+        continue;
       }
-      else if ((b1 & 0b1000_0000) != b1) {
-        if (b2 == 0) {
-          // Support for "simple" 1 byte characters
-          bytes.push(0);
-          continue;
-        } else {
-          // support for 3 byte characters
-          // their unicode value is less than 0xFFFF
-          // Which is a lot of emojis: http://unicode.org/Public/emoji/5.0/emoji-data.txt
+      else if (b2 < 0b0100_0000) { // Three byte chare ////////////////////
 
-          const z1 = (b2 >> 7) & 1;
-          const z2 = (b2 >> 6) & 1;
-          const z3 = (b2 >> 5) & 1;
-          const z4 = (b2 >> 4) & 1;
-          const y1 = (b2 >> 3) & 1;
-          const y2 = (b2 >> 2) & 1;
-          const y3 = (b2 >> 1) & 1;
-          const y4 = (b2 >> 0) & 1;
+        const z1 = (b2 >> 7) & 1;
+        const z2 = (b2 >> 6) & 1;
+        const z3 = (b2 >> 5) & 1;
+        const z4 = (b2 >> 4) & 1;
+        const y1 = (b2 >> 3) & 1;
+        const y2 = (b2 >> 2) & 1;
+        const y3 = (b2 >> 1) & 1;
+        const y4 = (b2 >> 0) & 1;
 
-          const y5 = (b1 >> 7) & 1;
-          const y6 = (b1 >> 6) & 1;
-          const x1 = (b1 >> 5) & 1;
-          const x2 = (b1 >> 4) & 1;
-          const x3 = (b1 >> 3) & 1;
-          const x4 = (b1 >> 2) & 1;
-          const x5 = (b1 >> 1) & 1;
-          const x6 = (b1 >> 0) & 1;
+        const y5 = (b1 >> 7) & 1;
+        const y6 = (b1 >> 6) & 1;
+        const x1 = (b1 >> 5) & 1;
+        const x2 = (b1 >> 4) & 1;
+        const x3 = (b1 >> 3) & 1;
+        const x4 = (b1 >> 2) & 1;
+        const x5 = (b1 >> 1) & 1;
+        const x6 = (b1 >> 0) & 1;
 
-          const z = 0b11100000 + z1*8 + z2*4 + z3*2 + z4*1;
-          const y = 0b10000000 + y1*32 + y2*16 + y3*8 + y4*4 + y5*2 + y6*1;
-          const x = 0b10000000 + x1*32 + x2*16 + x3*8 + x4*4 + x5*2 + x6*1;
-          
-          bytes.push(z);
-          bytes.push(y);
-          bytes.push(x);
+        const z = 0b11100000 + z1*8 + z2*4 + z3*2 + z4*1;
+        const y = 0b10000000 + y1*32 + y2*16 + y3*8 + y4*4 + y5*2 + y6*1;
+        const x = 0b10000000 + x1*32 + x2*16 + x3*8 + x4*4 + x5*2 + x6*1;
+        
+        bytes.push(z);
+        bytes.push(y);
+        bytes.push(x);
 
-          continue;
-        }
-      }
-      else {
-        const b3 = memory[cursor++];
-        const b4 = memory[cursor++];
-        // console.log(`orig ${b1} ${b2} ${b3} ${b4}`)
-
-        bytes.push("X".charCodeAt(0)); // 1
-        bytes.push(0);
         continue;
       }
 
@@ -155,14 +151,13 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
   const js_curses_transform_line = (row, col, len, str, fg, bg) => {
     
     len *= 2;
-    // len *= 2;
 
     ctx.term.write(ansi.cursor.position(row+1, col+1))
 
     const snapshot = new Uint8Array(ctx.buffer);
     const value = decode_n(snapshot, str, len);
 
-    console.log(`transform_line(${len});`);
+    console.log(`transform_line('${value}')[${len}];`);
 
     const { start, end } = _get_color_ansi_code_fragments(fg, bg);
     ctx.term.write(start + value + end);

@@ -124,9 +124,10 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
   char aleph[5] = "א";
   char ltu[4] = "ė";
 
-  mvwaddstr(local_win, 2, 2, "  ⚡ flash");
-  mvwaddstr(local_win, 3, 2, "  ė lithuanian");
-  mvwaddstr(local_win, 4, 2, "  א hebrew");
+  mvwaddstr(local_win, 1, 2, "🍔 hamburger");
+  mvwaddstr(local_win, 2, 2, "⚡ flash");
+  mvwaddstr(local_win, 3, 2, "ė lithuanian");
+  mvwaddstr(local_win, 4, 2, "א hebrew");
 
   wattroff(local_win, COLOR_PAIR(MY_PAIR_LABEL));
 
