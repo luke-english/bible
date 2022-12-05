@@ -12,10 +12,12 @@ mkdir -p /tmp/obj
 
 emcc /mnt/src/zcurses.c -c \
   -I /opt/pdcurses \
+  -I /opt/pdcurses/wasm \
   -o /tmp/obj/zcurses.bc.o
 
 emcc /mnt/src/activity.c -c \
   -I /opt/pdcurses \
+  -I /opt/pdcurses/wasm \
   -o /tmp/obj/activity.bc.o
 
 emcc /mnt/src/ctx.c -c \
@@ -23,17 +25,21 @@ emcc /mnt/src/ctx.c -c \
 
 emcc /mnt/src/program.c -c \
   -I /opt/emcurses \
+  -I /opt/pdcurses/wasm \
   -o /tmp/obj/program.bc.o
 
 emcc /mnt/src/scripture.c -c \
   -o /tmp/obj/scripture.bc.o
 
+
 emcc \
   -O3 \
   -s WASM=1 \
+  -s ASYNCIFY \
   --minify 0 \
   --no-entry \
   -I /opt/pdcurses \
+  -I /opt/pdcurses/wasm \
   /mnt/src/bible.c \
   /tmp/obj/activity.bc.o \
   /tmp/obj/ctx.bc.o \

@@ -18,7 +18,7 @@
 
 #include <string.h>
 
-#include "jscurses.h"
+#include "pdcwasm.h"
 
 void PDC_set_keyboard_binary(bool on)
 {

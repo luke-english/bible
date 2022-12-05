@@ -49,6 +49,7 @@ fetch("./wasm/bible.wasm")
     ctx.buffer = module.instance.exports.memory.buffer;
     ctx.term = createTerminal();
     ctx.term.focus();
+    ctx.input = []
 
     ctx.term.onResize(({ cols, rows }) => {
       module.instance.exports.on_resize(rows, cols);
@@ -58,6 +59,7 @@ fetch("./wasm/bible.wasm")
       const { key } = keyEvt;
       const chars = new TextEncoder().encode(key);
       chars.forEach(c => {
+        ctx.input.push(c)
         module.instance.exports.on_keypress(c);
       });
     });

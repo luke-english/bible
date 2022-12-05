@@ -1,6 +1,6 @@
 /* Public Domain Curses */
 
-#include "jscurses.h"
+#include "pdcwasm.h"
 
 /*man-start**************************************************************
 

@@ -1,5 +1,4 @@
-FROM emscripten/emsdk
-
+FROM emscripten/emsdk:3.1.25
 WORKDIR /opt
 
 # Take patched distribution of PDCurses

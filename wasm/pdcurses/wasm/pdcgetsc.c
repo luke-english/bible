@@ -1,6 +1,6 @@
 /* Public Domain Curses */
 
-#include "jscurses.h"
+#include "pdcwasm.h"
 
 /* get the cursor size/shape */
 

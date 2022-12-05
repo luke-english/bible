@@ -214,6 +214,24 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     console.log("js_curses_scr_open");
   }
 
+  js_curses_check_key = () => {
+    const input = ctx.input;
+    console.log({input});
+    return input > 0 ? 1 : 0;
+  }
+
+  js_curses_get_key =  () => {
+    return 55;
+    // return new Promise(resolve => setTimeout(() => resolve(97), 1000));
+
+  }
+
+  js_curses_napms =  () => {
+    return 55;
+    // return new Promise(resolve => setTimeout(() => resolve(97), 1000));
+
+  }
+
   return {
     js_curses_set_char,
     js_curses_get_rows,
@@ -224,6 +242,9 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     js_curses_gotoyx,
     js_curses_get_cursor_mode,
     js_curses_scr_open,
+    js_curses_check_key,
+    js_curses_get_key,
+    js_curses_napms,
     js_curses_transform_line
   };
 }

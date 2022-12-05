@@ -1,6 +1,6 @@
 /* Public Domain Curses */
 
-#include <curspriv.h>
+#include "pdcwasm.h"
 
 void PDC_beep(void)
 {
@@ -10,6 +10,8 @@ void PDC_beep(void)
 
 void PDC_napms(int ms)
 {
+    js_curses_napms(ms);
+
     PDC_LOG(("PDC_napms() - called: ms=%d\n", ms));
 }
 

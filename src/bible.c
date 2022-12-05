@@ -1,17 +1,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <locale.h>
-
-
 #include "program.h"
 #include "ctx.h"
 #include "activity.h"
 
 #include "zcurses.h"
 #include "colors.h"
-
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 ctx_t* ctx;
 program_t* program;
+
+void on_resize(int rows, int cols);
+int on_keypress(int key);
 
 __attribute__((used))
 void on_init() {
@@ -36,6 +39,22 @@ void on_init() {
   init_pair(MY_PAIR_MENU_SELECTED_HI, COLOR_BLUE, COLOR_YELLOW);
   init_pair(MY_PAIR_DESKTOP, COLOR_BLUE, COLOR_WHITE);
   init_pair(MY_PAIR_ALERT, COLOR_WHITE, COLOR_RED);
+
+  char ch;
+  char i = 0;
+  while (TRUE) {
+    // ch = getch();
+    
+    int ch = js_curses_get_key();
+
+    if (ch == 154) {
+      getmaxyx(stdscr, rows, cols);
+      on_resize(rows, cols);
+    } else {
+      on_keypress(ch);
+    }
+    break;
+  }
 }
 
 __attribute__((used))
