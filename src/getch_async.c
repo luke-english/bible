@@ -1,4 +1,4 @@
-#include "pdcwasm.h"
+#include "zcurses.h"
 
 typedef void global_cb_t(int ch);
 
@@ -14,9 +14,10 @@ void ingest_ch(int ch) {
 
 void wgetch_async(WINDOW* win, global_cb_t* cb) {
 #ifdef __EMSCRIPTEN__
+  // This is not really wgetch...
   _set_cb(cb);
 #else
-  // traditional way of doing it
+  // ...and this is not really async!
   while (TRUE) {
     int ch = wgetch(win);
     cb(ch);

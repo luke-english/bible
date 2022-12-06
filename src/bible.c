@@ -17,12 +17,18 @@ program_t* program;
 
 void on_resize(int rows, int cols);
 
-void my_handle_keypress(int key) {
-  program_on_keypress(program, key);
-}
+void my_handle_keypress(int ch) {
+  int rows; int cols;
+  if (ch == KEY_RESIZE) {
+    // This is for NCurses only
+    getmaxyx(stdscr, rows, cols);
+    program_on_resize(program, rows, cols);
+    // program_on_keypress(program, ch+200);
 
-/// library //
-/// end library ////
+  } else {
+    program_on_keypress(program, ch);
+  }
+}
 
 __attribute__((used))
 void on_init() {
@@ -48,14 +54,15 @@ void on_init() {
   init_pair(MY_PAIR_DESKTOP, COLOR_BLUE, COLOR_WHITE);
   init_pair(MY_PAIR_ALERT, COLOR_WHITE, COLOR_RED);
 
-  char ch;
-  char i = 0;
-
   wgetch_async(stdscr, &my_handle_keypress);
+  // There should be nothing after this.
+  // (Behaves differently for NCurses and WASM)
 }
 
 __attribute__((used))
 void on_resize(int rows, int cols) {
+  LINES = rows;
+  COLS = cols;
   program_on_resize(program, rows, cols);
 }
 
@@ -66,24 +73,8 @@ void on_keypress(int key) {
 
 #ifndef __EMSCRIPTEN__
 int main(int argc, char** argv) {
-  int rows; int cols;
 
   on_init();
-  getmaxyx(stdscr, rows, cols);
-  on_resize(rows, cols);
-
-  char ch;
-  while (TRUE) {
-    ch = getch();
-
-    if (ch == 154) {
-      getmaxyx(stdscr, rows, cols);
-      on_resize(rows, cols);
-    } else {
-      on_keypress(ch);
-    }
-  }
-
 	endwin();
 }
 #endif

@@ -51,6 +51,8 @@ fetch("./wasm/bible.wasm")
     ctx.term.focus();
 
     ctx.term.onResize(({ cols, rows }) => {
+      ctx.term.rows = rows;
+      ctx.term.cols = cols;
       module.instance.exports.on_resize(rows, cols);
     });
 
