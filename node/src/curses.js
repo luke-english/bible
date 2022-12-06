@@ -215,9 +215,11 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
   }
 
   js_curses_check_key = () => {
-    const input = ctx.input;
-    console.log({input});
-    return input > 0 ? 1 : 0;
+    console.error(
+      "Direct call to getch() is not supported on WASM platform. " +
+      "Please use while_getch() instead"
+    )
+    throw new Error("Better die here, than risk to get into busy-wait loop.");
   }
 
   js_curses_get_key =  () => {

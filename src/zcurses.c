@@ -25,5 +25,6 @@ EM_JS(void, js_curses_simulateinfiniteloop_error, (void));
 EM_JS(void, js_curses_resize_screen, (const int nrows, const int ncols));
 EM_JS(void, js_curses_transform_line, (int lineno, int x, int len, const void *srcp, short fg, short bg));
 EM_JS(void, js_curses_napms, (int ms));
+// EM_JS(void, js_curses_set_getch_cb, (int key));
 
 #endif /* EMSCRIPTEN*/

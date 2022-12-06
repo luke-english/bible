@@ -15,6 +15,11 @@ emcc /mnt/src/zcurses.c -c \
   -I /opt/pdcurses/wasm \
   -o /tmp/obj/zcurses.bc.o
 
+emcc /mnt/src/getch_async.c -c \
+  -I /opt/pdcurses \
+  -I /opt/pdcurses/wasm \
+  -o /tmp/obj/getch_async.bc.o
+
 emcc /mnt/src/activity.c -c \
   -I /opt/pdcurses \
   -I /opt/pdcurses/wasm \
@@ -46,6 +51,7 @@ emcc \
   /tmp/obj/program.bc.o \
   /tmp/obj/scripture.bc.o \
   /tmp/obj/zcurses.bc.o \
+  /tmp/obj/getch_async.bc.o \
   /opt/pdcurses/wasm/libpdcurses.so \
   -o /mnt/wasm/bible.wasm
 

@@ -4,8 +4,10 @@
 #include "program.h"
 #include "ctx.h"
 #include "activity.h"
+#include "getch_async.h"
 
 #include "zcurses.h"
+
 #include "colors.h"
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -14,7 +16,13 @@ ctx_t* ctx;
 program_t* program;
 
 void on_resize(int rows, int cols);
-int on_keypress(int key);
+
+void my_handle_keypress(int key) {
+  program_on_keypress(program, key);
+}
+
+/// library //
+/// end library ////
 
 __attribute__((used))
 void on_init() {
@@ -42,19 +50,8 @@ void on_init() {
 
   char ch;
   char i = 0;
-  while (TRUE) {
-    // ch = getch();
-    
-    int ch = js_curses_get_key();
 
-    if (ch == 154) {
-      getmaxyx(stdscr, rows, cols);
-      on_resize(rows, cols);
-    } else {
-      on_keypress(ch);
-    }
-    break;
-  }
+  wgetch_async(stdscr, &my_handle_keypress);
 }
 
 __attribute__((used))
@@ -63,9 +60,8 @@ void on_resize(int rows, int cols) {
 }
 
 __attribute__((used))
-int on_keypress(int key) {
-  program_on_keypress(program, key);
-  return 1;
+void on_keypress(int key) {
+  ingest_ch(key);
 }
 
 #ifndef __EMSCRIPTEN__
