@@ -41,6 +41,7 @@ emcc \
   -O3 \
   -s WASM=1 \
   -s ASYNCIFY \
+  -s ASYNCIFY_IMPORTS=[await_timeout] \
   --minify 0 \
   --no-entry \
   -I /opt/pdcurses \

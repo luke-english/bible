@@ -2,6 +2,7 @@ import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { curses } from './curses.js';
 import * as boilerplate from './boilerplate.js';
+import * as Asyncify from 'asyncify-wasm';
 
 const ctx = {};
 
@@ -27,14 +28,12 @@ const createTerminal = () => {
 
 console.log(boilerplate);
 var asmLibraryArg = {
-  memory: new WebAssembly.Memory({
-    initial: 2, // x 64KB
-    maximum: 10, // 640K ought to be enough for anybody!
-    shared: false
-  }),
-  table: new WebAssembly.Table({ initial: 256, element: 'anyfunc' }),
   ...boilerplate,
   ...curses(ctx),
+  await_timeout: async (ms) => {
+    await new Promise(resolve => setTimeout(resolve, ms));
+    console.log("finished!");
+  },
 };
 
 var importObject = {
@@ -44,7 +43,9 @@ var importObject = {
 
 fetch("./wasm/bible.wasm")
   .then((response) => response.arrayBuffer())
-  .then((bytes) => WebAssembly.instantiate(bytes, importObject))
+  .then((bytes) => Asyncify.instantiate(bytes, importObject))
+  // .then((bytes) => WebAssembly.instantiate(bytes, importObject))
+
   .then((module) => {
     ctx.buffer = module.instance.exports.memory.buffer;
     ctx.term = createTerminal();

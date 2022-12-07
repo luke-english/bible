@@ -30,6 +30,8 @@ void my_handle_keypress(int ch) {
   }
 }
 
+EM_JS(void, await_timeout, (int ms));
+
 __attribute__((used))
 void on_init() {
   int rows; int cols;
@@ -57,6 +59,12 @@ void on_init() {
   wgetch_async(stdscr, &my_handle_keypress);
   // There should be nothing after this.
   // (Behaves differently for NCurses and WASM)
+
+  addstr("ready...\n\r");
+  refresh();
+  await_timeout(2000);
+  addstr("done!\n\r");
+  refresh();
 }
 
 __attribute__((used))
