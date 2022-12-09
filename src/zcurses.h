@@ -10,4 +10,3 @@
 #ifndef __EMSCRIPTEN__
 #include <curses.h>
 #endif /* !EMSCRIPTEN */
-

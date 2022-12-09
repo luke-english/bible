@@ -26,6 +26,7 @@ BUILD		= $(CC) $(CFLAGS) -I$(PDCURSES_SRCDIR)
 
 LINK		= $(CC)
 LDFLAGS	= $(LIBCURSES)
+# LIBCURSES	= libpdcurses.a
 LIBCURSES	= libpdcurses.so
 
 .PHONY: all libs clean 
@@ -41,6 +42,7 @@ demos:	$(DEMOS)
 
 $(LIBCURSES) : $(LIBOBJS) $(PDCOBJS)
 	$(CC) $(CFLAGS) -shared $^ -o $@
+	# emar rc $@ $^ 
 
 $(LIBOBJS) $(PDCOBJS) : $(PDCURSES_HEADERS)
 $(PDCOBJS) : $(PDCURSES_SDL_H)

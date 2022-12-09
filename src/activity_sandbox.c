@@ -51,16 +51,9 @@ void activity_sandbox_on_keypress(activity_t* activity, int key) {
   activity_sandbox_t* self = _activity_get_details(activity);
   WINDOW* win = self->redwin;
 
-  // print pressed key
-  wattron(win, COLOR_PAIR(MY_PAIR_LABEL));
-  char msg[80];
-  sprintf(msg, "sb_%d,\n\r", key);
-  waddstr(win, msg);
-  wattroff(win, COLOR_PAIR(MY_PAIR_LABEL));
-
 	wrefresh(win);
 
- if (key == 'h') {
+  if (key == 'h') {
     destroy_win(win);
 
     touchwin(stdscr);

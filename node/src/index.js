@@ -30,10 +30,6 @@ console.log(boilerplate);
 var asmLibraryArg = {
   ...boilerplate,
   ...curses(ctx),
-  await_timeout: async (ms) => {
-    await new Promise(resolve => setTimeout(resolve, ms));
-    console.log("finished!");
-  },
 };
 
 var importObject = {
@@ -44,27 +40,26 @@ var importObject = {
 fetch("./wasm/bible.wasm")
   .then((response) => response.arrayBuffer())
   .then((bytes) => Asyncify.instantiate(bytes, importObject))
-  // .then((bytes) => WebAssembly.instantiate(bytes, importObject))
 
   .then((module) => {
     ctx.buffer = module.instance.exports.memory.buffer;
     ctx.term = createTerminal();
     ctx.term.focus();
+    ctx.inputchar = null;
 
+    // Probably not needed too...
     ctx.term.onResize(({ cols, rows }) => {
       ctx.term.rows = rows;
       ctx.term.cols = cols;
-      module.instance.exports.on_resize(rows, cols);
     });
 
     ctx.term.onKey((keyEvt) => {
       const { key } = keyEvt;
       const chars = new TextEncoder().encode(key);
       chars.forEach(c => {
-        module.instance.exports.on_keypress(c);
+        ctx.inputchar = c;
       });
     });
 
     module.instance.exports.on_init();
-    module.instance.exports.on_resize(ctx.term.rows, ctx.term.cols);
   });

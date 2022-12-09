@@ -178,15 +178,9 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     ctx.term.write(start + value + end);
   }
 
-  const js_curses_get_rows = () => {
-    console.log("get_rows ctx.term.rows", ctx.term.rows)
+  const js_curses_get_rows = () => ctx.term.rows;
 
-    return ctx.term.rows;
-  }
-
-  const js_curses_get_cols = () => {
-    return ctx.term.cols;
-  }
+  const js_curses_get_cols = () => ctx.term.cols;
 
   const js_curses_curs_on = () => {
     ctx.term.write(ansi.cursor.show);
@@ -214,24 +208,17 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     console.log("js_curses_scr_open");
   }
 
-  js_curses_check_key = () => {
-    console.error(
-      "Direct call to getch() is not supported on WASM platform. " +
-      "Please use while_getch() instead"
-    )
-    throw new Error("Better die here, than risk to get into busy-wait loop.");
+  js_curses_check_key = () => (ctx.inputchar !== null) ? 1 : 0;
+
+  js_curses_get_key = () => {
+    const char = ctx.inputchar;
+    ctx.inputchar = null;
+    return char;
   }
 
-  js_curses_get_key =  () => {
-    return 55;
-    // return new Promise(resolve => setTimeout(() => resolve(97), 1000));
-
-  }
-
-  js_curses_napms =  () => {
-    return 55;
-    // return new Promise(resolve => setTimeout(() => resolve(97), 1000));
-
+  const await_timeout = async (ms) => {
+    // console.log('await_timeout in index.js', ms)
+    return await new Promise(resolve => setTimeout(resolve, ms));
   }
 
   return {
@@ -246,8 +233,8 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     js_curses_scr_open,
     js_curses_check_key,
     js_curses_get_key,
-    js_curses_napms,
-    js_curses_transform_line
+    js_curses_transform_line,
+    await_timeout,
   };
 }
 
