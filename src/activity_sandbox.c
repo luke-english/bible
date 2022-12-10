@@ -41,8 +41,10 @@ void activity_sandbox_on_resize(activity_t* activity, int rows, int cols) {
 	starty = (LINES - height) / 2;	/* Calculating for a center placement */
 	startx = (COLS - width) / 2;	/* of the window		*/
   
+  touchwin(stdscr);
   bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
   refresh();
+  
   curs_set(0);
 	self->redwin = create_newwin(height, width, starty, startx);
 }

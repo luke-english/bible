@@ -17,8 +17,10 @@ void on_resize(int rows, int cols);
 void my_handle_keypress(int ch) {
   int rows; int cols;
   if (ch == KEY_RESIZE) {
+
     getmaxyx(stdscr, rows, cols);
     program_on_resize(program, rows, cols);
+
   } else {
     program_on_keypress(program, ch);
   }

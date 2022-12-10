@@ -16,7 +16,7 @@ activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx) {
 void activity_welcome_on_resize(activity_t* activity, int rows, int cols) {
   char msg[80];
   sprintf(msg, "SZ: %dx%d!__\n\r", rows, cols);
-  mvwaddstr(stdscr, 1, 10, msg);
+  addstr(msg);
 	refresh();
 }
 

@@ -23,5 +23,5 @@ void js_curses_curs_off(void);
 void js_curses_simulateinfiniteloop_error(void);
 void js_curses_resize_screen(const int nrows, const int ncols);
 void js_curses_transform_line(int lineno, int x, int len, const void *srcp, short fg, short bg);
-
 void await_timeout(int ms);
+void browser_log(void* msg);

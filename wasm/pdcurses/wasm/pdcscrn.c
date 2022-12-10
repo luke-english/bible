@@ -49,10 +49,7 @@ int PDC_scr_open(void)
     //     term.open();
     // );
 
-    // TODO 
-
     js_curses_scr_open();
-
 
     SP->mono = 0;
     SP->orig_attr = FALSE;
@@ -79,67 +76,21 @@ int PDC_scr_open(void)
     return OK;
 }
 
-/*
- * Public EMCurses-specific function to set a C-callback
- * to be called when a key has been pressed.
- */
-void PDC_emscripten_set_handler(void (*func)(void), int simulateInfiniteLoop)
-{
-    // EM_ASM_INT({
-    //     term.handler = function() {
-    //         Runtime.dynCall('v', $0);
-    //     };
-
-    //     /*
-    //      * patch term.resizeTo(): also call func,
-    //      * so the handler has a chance to notice terminal resizings
-    //      */
-    //     term.orig_resizeTo = term.orig_resizeTo || term.resizeTo;
-    //     term.resizeTo = function(x,y) {
-    //         var r = this.orig_resizeTo(x,y);
-    //         if (r)
-    //             Runtime.dynCall('v', $0);
-    //         return r;
-    //     };
-    // }, (int)func);
-
-    // TOO complicated not for now
-
-    if (simulateInfiniteLoop)
-        js_curses_simulateinfiniteloop_error();
-        // TODO
-        // EM_ASM(throw 'SimulateInfiniteLoop');
-}
-
 /* the core of resize_term() */
 
 int PDC_resize_screen(int nlines, int ncols)
 {
-    // EM_ASM_INT({
-    //     term.resizeTo($0, $1);
-    // }, ncols, nlines);
-    js_curses_resize_screen(nlines, ncols);
-
-    SP->resized = FALSE;
-    SP->cursrow = SP->curscol = 0;
-
     return OK;
 }
 
 void PDC_reset_prog_mode(void)
 {
     PDC_LOG(("PDC_reset_prog_mode() - called.\n"));
-
-//    PDC_flushinp();
-//    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 }
 
 void PDC_reset_shell_mode(void)
 {
     PDC_LOG(("PDC_reset_shell_mode() - called.\n"));
-
-//    SDL_EnableKeyRepeat(0, 0);
-//    PDC_flushinp();
 }
 
 void PDC_restore_screen_mode(int i)

@@ -29,56 +29,28 @@ void PDC_set_keyboard_binary(bool on)
 
 bool PDC_check_key(void)
 {
-    if ((PDC_get_columns() != SP->cols ||
-         PDC_get_rows() != SP->lines) && !SP->resized)
-	return TRUE;
+    if (PDC_get_columns() != SP->cols || PDC_get_rows() != SP->lines) {
+
+        SP->lines = PDC_get_rows();
+        SP->cols = PDC_get_columns();
+        SP->resized = FALSE;
+
+        return TRUE;
+    }
 
     return js_curses_check_key() ? TRUE : FALSE;
-    // return EM_ASM_INT_V({
-    //     return term.inputChar;
-    // }) ? TRUE : FALSE;
 }
 
 /* return the next available key or mouse event */
 
 int PDC_get_key(void)
 {
-    // int c = EM_ASM_INT_V({
-    //     var c = term.inputChar;
-    //     term.inputChar = 0;
-    //     return c;
-    // });
-    // TODO...
+    int key = js_curses_get_key();
 
-    int c = js_curses_get_key();
-
-    int key = 0;
-
-    switch (c) {
-    case 0x7F: /* DEL */
-        key = KEY_DC;
-        break;
-    case 0x1C: /* LEFT */
-        key = KEY_LEFT;
-        break;
-    case 0x1D: /* RIGHT */
-        key = KEY_RIGHT;
-        break;
-    case 0x1E: /* UP */
-        key = KEY_UP;
-        break;
-    case 0x1F: /* DOWN */
-        key = KEY_DOWN;
-        break;
-    default:
-        key = c;
-        break;
-    }
     SP->key_code = (key > 0x100);
 
     if (!key) {
-        if ((PDC_get_columns() != SP->cols ||
-             PDC_get_rows() != SP->lines) && !SP->resized) {
+        if (!SP->resized) {
             SP->resized = TRUE;
             key = KEY_RESIZE;
         }
@@ -95,9 +67,6 @@ void PDC_flushinp(void)
     PDC_LOG(("PDC_flushinp() - called\n"));
 
     js_curses_flushinp();
-
-    // TODO but this is using same function as above....
-    // EM_ASM(term.inputChar = 0);
 }
 
 int PDC_mouse_set(void)

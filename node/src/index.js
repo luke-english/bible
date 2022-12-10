@@ -19,14 +19,12 @@ const createTerminal = () => {
   }
   window.addEventListener('resize', onWindowSize, false);
 
-  // Open the terminal now!
   terminal.open(document.getElementById('terminal-container'));
-  onWindowSize(); // trigger fit initially...
+  onWindowSize();
 
   return terminal;
 }
 
-console.log(boilerplate);
 var asmLibraryArg = {
   ...boilerplate,
   ...curses(ctx),
@@ -47,10 +45,9 @@ fetch("./wasm/bible.wasm")
     ctx.term.focus();
     ctx.inputchar = null;
 
-    // Probably not needed too...
     ctx.term.onResize(({ cols, rows }) => {
-      ctx.term.rows = rows;
       ctx.term.cols = cols;
+      ctx.term.rows = rows;
     });
 
     ctx.term.onKey((keyEvt) => {

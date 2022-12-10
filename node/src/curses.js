@@ -155,14 +155,6 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     return {start, end}
   }
 
-  const js_curses_set_char = (ch, row, col, fg, bg) => {
-    // const { start, end } = _get_color_ansi_code_fragments(fg, bg);
-    // console.log({ch})
-
-    // ctx.term.write(ansi.cursor.position(row+1, col+1))
-    // ctx.term.write(start + String.fromCharCode(ch) + end);
-  }
-
   const js_curses_transform_line = (row, col, len, str, fg, bg) => {
     
     len *= 2;
@@ -172,15 +164,21 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     const snapshot = new Uint8Array(ctx.buffer);
     const value = decode_n(snapshot, str, len);
 
-    console.log(`transform_line('${value}')[${len}];`);
+    // console.log(`transform_line('${value}')[${len}];`);
 
     const { start, end } = _get_color_ansi_code_fragments(fg, bg);
     ctx.term.write(start + value + end);
   }
 
-  const js_curses_get_rows = () => ctx.term.rows;
+  const js_curses_get_rows = () => {
+    // console.log(`ROWS=${ctx.term.rows}`);
+    return ctx.term.rows;
+  }
 
-  const js_curses_get_cols = () => ctx.term.cols;
+  const js_curses_get_cols = () => {
+    // console.log(`COLS=${ctx.term.cols}`);
+    return ctx.term.cols;
+  }
 
   const js_curses_curs_on = () => {
     ctx.term.write(ansi.cursor.show);
@@ -221,8 +219,21 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     return await new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  const browser_log = (ptr) => {
+    const snapshot = new Uint8Array(ctx.buffer);
+    const value = decode_n(snapshot, ptr, 70);
+    const v = "";
+    const bytes = []
+    for (i = ptr;  i < ptr+30; i++) {
+        bytes.push(snapshot[i])
+    }
+
+    const enc = new TextDecoder()
+    const m =  enc.decode(new Uint8Array(bytes));
+    console.log(m);
+  }
+
   return {
-    js_curses_set_char,
     js_curses_get_rows,
     js_curses_get_cols,
     js_curses_curs_on,
@@ -235,6 +246,7 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     js_curses_get_key,
     js_curses_transform_line,
     await_timeout,
+    browser_log,
   };
 }
 
