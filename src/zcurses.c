@@ -4,13 +4,6 @@
 #include "pdcwasm.h"
 
 EM_JS(void, js_curses_gotoyx, (const int row, const int col));
-EM_JS(void, js_curses_set_char, (
-  const int ch,
-  const int row,
-  const int col,
-  const int fg,
-  const int bg
-));
 EM_JS(int, js_curses_get_cursor_mode, (void));
 EM_JS(int, js_curses_check_key, (void));
 EM_JS(int, js_curses_get_key, (void));

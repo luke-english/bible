@@ -8,8 +8,22 @@
 # include "../common/acsuni.h"
 // #else
 
-/* draw a cursor at (y, x) */
+/*
+Called at the end of doupdate(), this function finalizes the update of
+the physical screen to match the virtual screen, if necessary, i.e. if
+updates were deferred in PDC_transform_line().
+*/
+void PDC_doupdate(void)
+{
+    PDC_napms(1);
+}
 
+/* 
+Move the physical cursor (as opposed to the logical cursor affected by
+wmove()) to the given location. This is called mainly from doupdate().
+In general, this function need not compare the old location with the new
+one, and should just move the cursor unconditionally.
+*/
 void PDC_gotoyx(int row, int col)
 {
     PDC_LOG(("PDC_gotoyx() - called: row %d col %d from row %d col %d\n",
@@ -53,8 +67,14 @@ static int _new_packet (chtype attr, int len, int col, int lineno,
     return OK;
 }
 
-/* The core display routine -- update one line of text */
-
+/*
+The core output routine. It takes len chtype entities from srcp (a
+pointer into curscr) and renders them to the physical screen at line
+lineno, column x. It must also translate characters 0-127 via acs_map[],
+if they're flagged with A_ALTCHARSET in the attribute portion of the
+chtype. Actual screen updates may be deferred until PDC_doupdate() if
+desired (currently done with SDL and X11).
+*/
 void PDC_transform_line(int lineno, int x, int len, const chtype *srcp)
 {
 #ifdef PDC_WIDE
@@ -112,9 +132,4 @@ void PDC_transform_line(int lineno, int x, int len, const chtype *srcp)
     }
 
     _new_packet(old_attr, i, x, lineno, text);
-}
-
-void PDC_doupdate(void)
-{
-    PDC_napms(1);
 }

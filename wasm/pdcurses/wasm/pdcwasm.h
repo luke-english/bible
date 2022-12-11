@@ -3,13 +3,6 @@
 #include <curspriv.h>
 
 void js_curses_gotoyx(const int row, const int col);
-void js_curses_set_char(
-  const int ch,
-  const int row,
-  const int col,
-  const int fg,
-  const int bg
-);
 int js_curses_get_cursor_mode(void);
 int js_curses_check_key(void);
 int js_curses_get_key(void);
