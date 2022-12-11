@@ -51,6 +51,13 @@ in a browser:
 
     docker-compose run web
 
+## Alpine command line build
+
+It can use arbitrary text passed from *stdin*, running it in
+docker-compose the command can be chained like this:
+
+    cat file.txt | docker-compose run -T alpine
+
 [1]: https://emscripten.org/    
 [2]: https://webassembly.org/
 [3]: https://en.wikipedia.org/wiki/Curses_(programming_library)

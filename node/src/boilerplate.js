@@ -3,7 +3,7 @@ function writeAsciiToMemory(str, buffer, dontAddNull) {
 }
 
 function getExecutableName() {
-  return thisProgram || "./this.program";
+  return "./this.program";
 }
 
 function getEnvStrings() {
@@ -18,9 +18,7 @@ function getEnvStrings() {
       "LANG": lang,
       "_": getExecutableName()
     };
-    for (var x in ENV) {
-      if (ENV[x] === undefined) delete env[x]; else env[x] = ENV[x];
-    }
+
     var strings = [];
     for (var x in env) {
       strings.push(x + "=" + env[x]);
@@ -31,24 +29,10 @@ function getEnvStrings() {
 }
 
 export function environ_get(__environ, environ_buf) {
-  var bufSize = 0;
-  getEnvStrings().forEach(function (string, i) {
-    var ptr = environ_buf + bufSize;
-    HEAPU32[__environ + i * 4 >> 2] = ptr;
-    writeAsciiToMemory(string, ptr);
-    bufSize += string.length + 1;
-  });
   return 0;
 }
 
 export function environ_sizes_get(penviron_count, penviron_buf_size) {
-  var strings = getEnvStrings();
-  HEAPU32[penviron_count >> 2] = strings.length;
-  var bufSize = 0;
-  strings.forEach(function (string) {
-    bufSize += string.length + 1;
-  });
-  HEAPU32[penviron_buf_size >> 2] = bufSize;
   return 0;
 }
 
@@ -66,6 +50,5 @@ export function fd_write(fd, iov, iovcnt, pnum) {
 }
 
 export function proc_exit(code) {
-  EXITSTATUS = code;
-  quit_(code, new ExitStatus(code));
+  return 0;
 }

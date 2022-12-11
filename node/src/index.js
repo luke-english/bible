@@ -8,9 +8,7 @@ const ctx = {};
 
 const createTerminal = () => {
   const fitAddon = new FitAddon();
-  const terminal = new Terminal({
-    scrollback: 0
-  });
+  const terminal = new Terminal({ scrollback: 0 });
 
   // On container resize terminal will "fit"
   terminal.loadAddon(fitAddon);
@@ -28,6 +26,37 @@ const createTerminal = () => {
 var asmLibraryArg = {
   ...boilerplate,
   ...curses(ctx),
+  // size_t fread(
+  //   void *restrict ptr, size_t size, size_t nmemb,
+  // FILE *restrict stream);
+  //    fread(buffer, sizeof(char), BUFFER_SIZE, fIn);
+  fd_read: (bufferptr, size, nmemb, stream) => {
+    console.log('fd_read args', {bufferptr, size, nmemb, stream} )
+    if (bufferptr == 0)return 0;
+    throw new Error("buffer needs to be filled");
+  },
+  args_sizes_get: (...args) => {
+    console.log("args_sizes_get args", args)
+    return 1;
+  },
+  args_get: (...args) => {
+    console.log("args_get args", args)
+
+  },
+  altdata_read: (ptr, chunk_size) => {
+
+    console.log("altdata_read called ", ptr, chunk_size);
+    const snapshot = new Uint8Array(ctx.buffer);
+    let i = 0;
+    console.log(ctx.altdata)
+    while (i < chunk_size && ctx.altdata.length > 0) {
+      const byte = ctx.altdata.shift();
+      snapshot[ptr + i] = byte;
+      console.log("puts byte to memory", byte, ptr + i);
+      i++;
+    }
+    return i;
+  }
 };
 
 var importObject = {
@@ -35,7 +64,7 @@ var importObject = {
   "wasi_snapshot_preview1": asmLibraryArg
 };
 
-fetch("./wasm/bible.wasm")
+const loadBibleWasm = () => fetch("./wasm/bible.wasm")
   .then((response) => response.arrayBuffer())
   .then((bytes) => Asyncify.instantiate(bytes, importObject))
 
@@ -58,5 +87,18 @@ fetch("./wasm/bible.wasm")
       });
     });
 
-    module.instance.exports.on_init();
+    console.log(module.instance.exports); 
+    module.instance.exports.wasm_init();
   });
+
+const readText = async (event) => {
+  const file = event.target.files.item(0)
+  const text = await file.text();
+  const utf8Encode = new TextEncoder();
+  ctx.altdata = Array.from(utf8Encode.encode(text));
+
+  loadBibleWasm()
+}
+
+document.getElementById('file-input')
+  .addEventListener('change', readText);

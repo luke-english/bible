@@ -68,6 +68,7 @@ void _activity_discharge(activity_t* activity) {
 //    and factory methods bellow
 // 2. define protected factory methods _activity_create_next_* 
 //
+activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx);
 activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx);
 activity_t* activity_selectbook_ctor(activity_t* prev, ctx_t* ctx);
 activity_t* activity_sandbox_ctor(activity_t* prev, ctx_t* ctx);
@@ -77,11 +78,17 @@ void _activity_create_next_sandbox(activity_t* activity) {
     activity->phase = ACTIVITY_PHASE_BACKGROUND;
 }
 
+void _activity_create_next_welcome(activity_t* activity) {
+  activity->next = activity_welcome_ctor(activity, activity->ctx);
+    activity->phase = ACTIVITY_PHASE_BACKGROUND;
+}
+
 void _activity_create_next_selectbook(activity_t* activity) {
   activity->next = activity_selectbook_ctor(activity, activity->ctx);
   activity->phase = ACTIVITY_PHASE_BACKGROUND;
 }
 
+#include "activity_altdata.c"
 #include "activity_sandbox.c"
 #include "activity_welcome.c"
 #include "activity_selectbook.c"
@@ -104,6 +111,9 @@ void virtual_activity_dtor(activity_t* activity) {
 void virtual_activity_on_resize(activity_t* activity, int rows, int cols) {
   char ch[80];
   switch (activity->type) {
+    case ACTIVITY_TYPE_ALTDATA:
+      activity_altdata_on_resize(activity, rows, cols);
+      break;
     case ACTIVITY_TYPE_WELCOME:
       activity_welcome_on_resize(activity, rows, cols);
       break;
@@ -123,6 +133,9 @@ void virtual_activity_on_resize(activity_t* activity, int rows, int cols) {
 void virtual_activity_on_keypress(activity_t* activity, int key) {
   char ch[80];
   switch (activity->type) {
+    case ACTIVITY_TYPE_ALTDATA:
+      activity_altdata_on_keypress(activity, key);
+      break;
     case ACTIVITY_TYPE_WELCOME:
       activity_welcome_on_keypress(activity, key);
       break;

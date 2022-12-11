@@ -5,12 +5,15 @@
 #define ACTIVITY_TYPE_WELCOME    1
 #define ACTIVITY_TYPE_SELECTBOOK 2
 #define ACTIVITY_TYPE_SANDBOX    3
+#define ACTIVITY_TYPE_ALTDATA    4
 
 #define ACTIVITY_PHASE_BACKGROUND 1
 #define ACTIVITY_PHASE_ACTIVE     2
 #define ACTIVITY_PHASE_COMPLETE   3
 
 typedef struct activity_t activity_t;
+
+activity_t* activity_altdata_ctor(activity_t* previous, ctx_t* ctx);
 
 activity_t* activity_welcome_ctor(activity_t* previous, ctx_t* ctx);
 
