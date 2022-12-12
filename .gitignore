@@ -5,6 +5,7 @@
 /src/curses.h
 /obj
 /.vscode/
+/texts/
 **/*.c~
 **/*.h~
 **/*.log

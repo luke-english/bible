@@ -45,6 +45,7 @@ services:
     image: nginx
     volumes:
       - ./web/index.html:/usr/share/nginx/html/index.html
+      - ./web/demo.html:/usr/share/nginx/html/demo.html
       - ./web/favicon.ico:/usr/share/nginx/html/favicon.ico
       - ./node:/usr/share/nginx/html/node
       - ./wasm:/usr/share/nginx/html/wasm

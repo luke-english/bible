@@ -7,6 +7,8 @@ export default  {
     output: {
         path: path.resolve(__dirname, './dist'),
         filename: 'bible-bundle.js',
+        libraryTarget: 'var',
+        library: 'bible'
     },
     experiments: {
         outputModule: true,

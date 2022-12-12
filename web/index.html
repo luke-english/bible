@@ -6,27 +6,82 @@
     <script src="node/node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
     <style>
 
-      html, body, #desktop, #terminal-container {
+      html, body{
         height: 100%;
-        padding: 0;
+        padding: 10px;
         margin: 0;
-        background-color: black;
       }
-      #terminal-container .terminal .xterm-screen {
-        margin: auto;
-      }
-      #terminal .terminal .xterm-screen {
-        border:2px solid blue;
-        background: blue;
-      }
+    
     </style>
   </head>
   <body id="mainbody">
-    <input type="file" id="file-input" />
+    
+    <!-- Big div as a header of the file -->
+    <div id="header">
+      
+      <div id="title">
+        <h1>Bible Learning System</h1>
+      </div>
+      <p>
+        This is a Bible Learning System which 
+        will help you study the Word of God 
+        in an engaging and interactive way.
 
-    <div id="desktop">
+        The box bellow is a demo of the WASM version of the Bible Learning System.
+        Use your keyboard to type in the words you see on the screen.        
+      </p>
+
       <div id="terminal-container"></div>
-    </div>
-    <script src="./node/dist/bible-bundle.js"> </script>
+
+      <h2>How to use it</h2>
+      This software is free and open source.
+      It comes in two different shapes a WebAssembly executable that runs on the browser,
+      and a command line application.
+
+      <ol>
+        <li>Everyone is free to use the WASM version on this website.</li>
+        <li>Also, please feel free to install the WASM pacakage
+          on any website you manage as component</li>
+        <li>BibleTracker uses this software,
+          and also it has many different enhancements,
+          like tracking your progress</li>
+        <li>You can run it from command line using pre-packed Docker image.</li>
+        <li>This is an open source project, please build and customize it
+          right from the source code.</li>
+      </ol>
+
+      <h2>Run it in a Docker Container</h2>
+      If you have docker installed, it is very easy to run it from the command line.
+      You can use the following command:
+      <pre>
+      docker run -it --rm text-based/bible
+      </pre>
+
+      <h2>Install it on your web site</h2>
+      The WebAssembly version can be installed as a HTML component on your website.
+      If you use some sort of bundler, the easiest way to install it to your
+      project is via NPM:
+      <pre>
+      npm install text-based/bible
+      </pre>
+
+      then embed it in your HTML like:
+      <pre>
+      &lt;script>
+        const container = document.getElementById('terminal-container');
+        bible.loadWasm(container);
+      &lt;/script>
+      </pre>
+
+      <p>Example is <a href="/demo.html">here</a></p>
+      <div id="footer">
+        <p>Copyright (c) 2015, <a href="https://gihub.com/text-based/bible">text-based/bible</a></p> 
+        <p>License: MIT</p>
+      </div>
   </body>
+  <script src="http://localhost:14001/demo.html"></script>
+  <script>
+    const container = document.getElementById('terminal-container');
+    bible.loadWasm(container, { altdata: ""});
+  </script>
 </html>
