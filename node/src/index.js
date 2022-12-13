@@ -1,7 +1,6 @@
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { curses } from './curses.js';
-import * as boilerplate from './boilerplate.js';
 import * as Asyncify from 'asyncify-wasm';
 
 export const loadWasm = (domElement, {altdata}) => {
@@ -28,8 +27,13 @@ export const loadWasm = (domElement, {altdata}) => {
   }
   
   var asmLibraryArg = {
-    ...boilerplate,
     ...curses(ctx),
+    proc_exit: () => {},
+    fd_close: () => {},
+    fd_write: () => {},
+    environ_sizes_get: () => {},
+    environ_get: () => {},
+    fd_seek: () => {},
     fd_read: (fd, iovs, iovsLen, nread) => {
       console.log({fd, iovs, iovsLen, nread})
       // only care about 'stdin'
@@ -70,7 +74,7 @@ export const loadWasm = (domElement, {altdata}) => {
     "wasi_snapshot_preview1": asmLibraryArg
   };
   
-  fetch("./wasm/bible.wasm")
+  return fetch("./wasm/bible.wasm")
     .then((response) => response.arrayBuffer())
     .then((bytes) => Asyncify.instantiate(bytes, importObject))
 

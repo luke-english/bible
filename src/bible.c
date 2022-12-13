@@ -58,34 +58,37 @@ void on_init() {
     my_handle_keypress(ch);
   }
 }
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-EM_JS(size_t, altdata_read, (uint8_t* bblob, size_t chunk_size));
-#endif
 
 #define PAGE_SIZE 24
 
-#ifdef __EMSCRIPTEN__
-__attribute__((used)) 
-void wasm_init() {
+void load_altdata() {
   FILE *fp = stdin;
 
   bblob = malloc(PAGE_SIZE);
   size_t memory = PAGE_SIZE;
-  uint8_t ch;
+  int32_t ch;
   while ((ch = fgetc(fp)) != EOF && ch != 255) {
     if (bblob_size == memory - 1) {
         memory += PAGE_SIZE;
-        bblob = (char *) realloc(bblob, memory);
+        bblob = (uint8_t *) realloc(bblob, memory);
     }
     bblob[bblob_size] = ch;
     bblob_size++;
-  }
+  }  
+}
 
+#ifdef __EMSCRIPTEN__
+
+#include <emscripten.h>
+
+__attribute__((used)) 
+void wasm_init() {
+  load_altdata();
   on_init();
 }
 
 #else
+
 #include <getopt.h>
 
 static struct option const longopts[] = {
@@ -94,23 +97,10 @@ static struct option const longopts[] = {
 };
 
 int main(int argc, char** argv) {
-
   int selected_opt = getopt_long(argc, argv, "+i:", longopts, NULL);
 
   if (selected_opt == 'i') {
-    FILE *fp = stdin;
-
-    bblob = malloc(PAGE_SIZE);
-    size_t memory = PAGE_SIZE;
-    uint8_t ch;
-    while ((ch = fgetc(fp)) != EOF && ch != 255) {
-      if (bblob_size == memory - 1) {
-          memory += PAGE_SIZE;
-          bblob = (char *) realloc(bblob, memory);
-      }
-      bblob[bblob_size] = ch;
-      bblob_size++;
-    }
+    load_altdata();
   }
 
   freopen("/dev/tty", "rw", stdin);

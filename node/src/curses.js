@@ -221,8 +221,6 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
 
   const browser_log = (ptr) => {
     const snapshot = new Uint8Array(ctx.buffer);
-    const value = decode_n(snapshot, ptr, 70);
-    const v = "";
     const bytes = []
     for (i = ptr;  i < ptr+30; i++) {
         bytes.push(snapshot[i])

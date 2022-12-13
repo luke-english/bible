@@ -6,12 +6,17 @@
     <script src="node/node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
     <style>
 
-      html, body{
+      html, body {
         height: 100%;
-        padding: 10px;
+        padding: 0;
         margin: 0;
       }
-    
+      #mainbody {
+        margin: 1em;
+      }
+      #terminal-container .xterm-screen {
+          border: 1px solid black;
+      }
     </style>
   </head>
   <body id="mainbody">
@@ -82,6 +87,9 @@
   <script src="./node/dist/bible-bundle.js"></script>
   <script>
     const container = document.getElementById('terminal-container');
-    bible.loadWasm(container, { altdata: ""});
+    bible.loadWasm(container, { altdata: ""}).then(() => {
+      console.log("Loaded WASM");
+      container.getElementsByClassName('xterm-viewport')[0].style.backgroundColor = 'unset';
+    });
   </script>
 </html>

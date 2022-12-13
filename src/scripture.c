@@ -137,7 +137,7 @@ const size_t get_chapter_blob(uint8_t ** blob, char *book_title,
 
     size_t bloblen = (end - start); // * sizeof(uint8_t);
     
-    char *p;
+    uint8_t *p;
     p = *blob = malloc(bloblen * sizeof(uint8_t));
     
     FILE *fp_ = fopen("usr/share/bible/the-king-james-bible.txt", "r");

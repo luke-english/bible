@@ -27,12 +27,6 @@ void activity_altdata_on_keypress(activity_t* activity, int key) {
 
   wattron(stdscr, COLOR_PAIR(MY_PAIR_WRONG));
   
-  char* count = malloc(40);
-  sprintf(count, "blob_size=%d,%d\n\r", bblob_size, bblob);
-  addstr(count);
-  free(count);
-  refresh();
-
   if (bblob_size > 0) { 
     char* msg = malloc(bblob_size + 2); // +2 for "\n\r"
     sprintf(msg, "%s\n\r", bblob);
