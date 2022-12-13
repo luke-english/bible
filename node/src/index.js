@@ -30,37 +30,39 @@ export const loadWasm = (domElement, {altdata}) => {
   var asmLibraryArg = {
     ...boilerplate,
     ...curses(ctx),
-    // size_t fread(
-    //   void *restrict ptr, size_t size, size_t nmemb,
-    // FILE *restrict stream);
-    //    fread(buffer, sizeof(char), BUFFER_SIZE, fIn);
-    fd_read: (bufferptr, size, nmemb, stream) => {
-      console.log('fd_read args', {bufferptr, size, nmemb, stream} )
-      if (bufferptr == 0)return 0;
-      throw new Error("buffer needs to be filled");
-    },
-    args_sizes_get: (...args) => {
-      console.log("args_sizes_get args", args)
-      return 1;
-    },
-    args_get: (...args) => {
-      console.log("args_get args", args)
+    fd_read: (fd, iovs, iovsLen, nread) => {
+      console.log({fd, iovs, iovsLen, nread})
+      // only care about 'stdin'
+      if(fd !== 0)
+        throw new Error('fd_read: fd != 0');
+
+      const view = new DataView(ctx.buffer);
+      view.setUint32(nread, 0, true);
   
-    },
-    altdata_read: (ptr, chunk_size) => {
+      // create a UInt8Array for each buffer
+      const buffers = Array.from({ length: iovsLen }, (_, i) => {
+          const    ptr = iovs + i * 8;
+          const    buf = view.getUint32(ptr, true);
+          const bufLen = view.getUint32(ptr + 4, true);
   
-      console.log("altdata_read called ", ptr, chunk_size);
-      const snapshot = new Uint8Array(ctx.buffer);
-      let i = 0;
-      console.log(ctx.altdata)
-      while (i < chunk_size && ctx.altdata.length > 0) {
-        const byte = ctx.altdata.shift();
-        snapshot[ptr + i] = byte;
-        console.log("puts byte to memory", byte, ptr + i);
-        i++;
-      }
-      return i;
-    }
+          console.log({ptr, buf, bufLen})
+          return new Uint8Array(ctx.buffer, buf, bufLen);
+      });
+
+      // fill each buffer with altdata
+      buffers.forEach(buf => {
+        let i;
+        for (i = 0; i<buf.length; i++) {
+          if (ctx.altdata.length === 0) {
+            break;
+          }
+          buf[i] = ctx.altdata.shift();
+        }
+        view.setUint32(nread, view.getUint32(nread, true) + i, true);
+      });
+      
+      return 0;
+    },
   };
   
   var importObject = {

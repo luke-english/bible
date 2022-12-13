@@ -1,5 +1,6 @@
 
 function writeAsciiToMemory(str, buffer, dontAddNull) {
+  
 }
 
 function getExecutableName() {
@@ -41,6 +42,8 @@ export function fd_close(fd) {
 }
 
 export function fd_seek(fd, offset_low, offset_high, whence, newOffset) {
+  console.log("supposed to fd_seek");
+
   return 70;
 }
 

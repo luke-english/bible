@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <locale.h>
+#include <errno.h>
+
 #include "program.h"
 #include "ctx.h"
 #include "activity.h"
@@ -29,30 +31,7 @@ void my_handle_keypress(int ch) {
   }
 }
 
-// __attribute__((used)) 
 void on_init() {
-  // FILE *fp = stdin;
-  // int memory = 10;
-  // char *all = malloc(10);
-  // char ch;
-
-  // int i = 0;
-
-  // while ((ch = fgetc(fp)) != EOF && ch != 255) {
-  //     printf("BLOB !! %d\r\n", ch);
-
-  //     if (i == memory - 1) {
-  //         memory += 10;
-  //         all = (char *) realloc(all, memory);
-  //     }
-  //     all[i] = ch;
-  //     i++;
-  // }
-
-  // // printf()
-
-  int rows; int cols;
-
   setlocale(LC_ALL, "");
   initscr();
   noecho();
@@ -89,15 +68,19 @@ EM_JS(size_t, altdata_read, (uint8_t* bblob, size_t chunk_size));
 #ifdef __EMSCRIPTEN__
 __attribute__((used)) 
 void wasm_init() {
-  size_t bytes_read = 0;
+  FILE *fp = stdin;
+
   bblob = malloc(PAGE_SIZE);
-  size_t memory = 0;
-  {
-    memory += PAGE_SIZE;
-    realloc(bblob, PAGE_SIZE);
-    size_t bytes_read = altdata_read(&bblob[bytes_read], PAGE_SIZE);
-    bblob_size += bytes_read;
-  } while (bytes_read == PAGE_SIZE);
+  size_t memory = PAGE_SIZE;
+  uint8_t ch;
+  while ((ch = fgetc(fp)) != EOF && ch != 255) {
+    if (bblob_size == memory - 1) {
+        memory += PAGE_SIZE;
+        bblob = (char *) realloc(bblob, memory);
+    }
+    bblob[bblob_size] = ch;
+    bblob_size++;
+  }
 
   on_init();
 }
@@ -117,16 +100,19 @@ int main(int argc, char** argv) {
   if (selected_opt == 'i') {
     FILE *fp = stdin;
 
-    size_t bytes_read = 0;
     bblob = malloc(PAGE_SIZE);
-    size_t memory = 0;
-    {
-      memory += PAGE_SIZE;
-      realloc(bblob, PAGE_SIZE);
-      size_t bytes_read = fread(bblob + bblob_size, 1, PAGE_SIZE, fp);
-      bblob_size += bytes_read;
-    } while (bytes_read == PAGE_SIZE);
+    size_t memory = PAGE_SIZE;
+    uint8_t ch;
+    while ((ch = fgetc(fp)) != EOF && ch != 255) {
+      if (bblob_size == memory - 1) {
+          memory += PAGE_SIZE;
+          bblob = (char *) realloc(bblob, memory);
+      }
+      bblob[bblob_size] = ch;
+      bblob_size++;
+    }
   }
+
   freopen("/dev/tty", "rw", stdin);
   fflush(stdin);
 
