@@ -103,7 +103,33 @@ void wasm_init() {
 }
 
 #else
+#include <getopt.h>
+
+static struct option const longopts[] = {
+    { "stdin", optional_argument, NULL, 'i' },
+    { NULL, 0, NULL, 0 }
+};
+
 int main(int argc, char** argv) {
+
+  int selected_opt = getopt_long(argc, argv, "+i:", longopts, NULL);
+
+  if (selected_opt == 'i') {
+    FILE *fp = stdin;
+
+    size_t bytes_read = 0;
+    bblob = malloc(PAGE_SIZE);
+    size_t memory = 0;
+    {
+      memory += PAGE_SIZE;
+      realloc(bblob, PAGE_SIZE);
+      size_t bytes_read = fread(bblob + bblob_size, 1, PAGE_SIZE, fp);
+      bblob_size += bytes_read;
+    } while (bytes_read == PAGE_SIZE);
+  }
+  freopen("/dev/tty", "rw", stdin);
+  fflush(stdin);
+
   on_init();
 	endwin();
 }

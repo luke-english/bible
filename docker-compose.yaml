@@ -8,15 +8,20 @@ services:
     working_dir: /mnt/alpine
     volumes:
       - ./alpine:/mnt/alpine
+      - ./texts:/mnt/texts
       - ./src:/mnt/src
     entrypoint: "sh -c"
     command:
       - |
-        # For educational purposes
-        cat /usr/include/curses.h
-
-        sh /mnt/alpine/build-alpine.sh
-        /tmp/bible
+        if [ -t 1 ] ; then
+          echo "🖥️ terminal"
+          sh /mnt/alpine/build-alpine.sh
+          /tmp/bible
+        else
+          cat > /tmp/altdata.txt
+          echo "🔌 not a terminal (must allways be terminal)"
+          exit 1
+        fi
 
   node:
     image: node

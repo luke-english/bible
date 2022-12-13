@@ -56,7 +56,7 @@ in a browser:
 It can use arbitrary text passed from *stdin*, running it in
 docker-compose the command can be chained like this:
 
-    cat file.txt | docker-compose run -T alpine
+    docker-compose run alpine 'sh /mnt/alpine/build-alpine.sh; cat /mnt/texts/metai.txt | /tmp/bible --stdin'
 
 [1]: https://emscripten.org/    
 [2]: https://webassembly.org/
