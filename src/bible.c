@@ -59,9 +59,11 @@ void on_init() {
   int rows; int cols;
   getmaxyx(stdscr, rows, cols);
   ctx_set_size(ctx, rows, cols);
+  
+  ACTWIN = stdscr;
 
   program_on_init(program);
-  ACTWIN = stdscr;
+  
   // Starts the main event loop
   while (TRUE) {
     if (ACTWIN == NULL) {

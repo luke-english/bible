@@ -38,6 +38,8 @@ extern WINDOW* ACTWIN;
 
 void activity_evil_on_init(activity_t *activity)
 {
+  curs_set(1);
+
   int rows = ctx_get_rows(activity->ctx);
   int cols = ctx_get_cols(activity->ctx);
   virtual_activity_on_resize(activity, rows, cols);
@@ -60,10 +62,12 @@ void activity_evil_on_resize(activity_t *activity, int rows, int cols)
   bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
   refresh();
 
-  curs_set(0);
+  // curs_set(0);
+
   self->redwin = _evil_create_newwin(height, width, starty, startx);
   win = self->redwin;
   ACTWIN = win;
+  // curs_set(1);
 
   wattron(win, COLOR_PAIR(MY_PAIR_HINT));
   char* msg = malloc(bblob_size + 2); // +2 for "\n\r"
@@ -73,7 +77,6 @@ void activity_evil_on_resize(activity_t *activity, int rows, int cols)
   wattroff(win, COLOR_PAIR(MY_PAIR_HINT));
 
   wmove(win, 0, 0);
-  curs_set(1);
   wrefresh(self->redwin);
 }
 
