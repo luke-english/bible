@@ -14,6 +14,13 @@ activity_t* activity_selectbook_ctor(activity_t* prev, ctx_t* ctx) {
   return super;
 }
 
+void activity_selectbook_on_init(activity_t* activity)
+{
+  int rows = ctx_get_rows(activity->ctx);
+  int cols = ctx_get_cols(activity->ctx);
+  virtual_activity_on_resize(activity, rows, cols);
+}
+
 void activity_selectbook_on_resize(activity_t* activity, int rows, int cols) {
   char msg[80];
   sprintf(msg, "ACT Select book: rows = %d; cols = %d\n\r", rows, cols);

@@ -21,6 +21,9 @@ void on_resize(int rows, int cols);
 
 void my_handle_keypress(int ch) {
   int rows; int cols;
+  if (ch == -1) {
+    return; // Actually, this only happens when the user closes the active window
+  }
   if (ch == KEY_RESIZE) {
 
     getmaxyx(stdscr, rows, cols);
@@ -55,10 +58,15 @@ void on_init() {
 
   int rows; int cols;
   getmaxyx(stdscr, rows, cols);
-  program_on_resize(program, rows, cols);
+  ctx_set_size(ctx, rows, cols);
 
+  program_on_init(program);
+  ACTWIN = stdscr;
   // Starts the main event loop
   while (TRUE) {
+    if (ACTWIN == NULL) {
+      exit(1);
+    }
     int ch = wgetch(ACTWIN);
     my_handle_keypress(ch);
   }

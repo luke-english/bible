@@ -34,6 +34,13 @@ void activity_sandbox_dtor(activity_sandbox_t *self)
 
 int startx, starty, width, height;
 
+void activity_sandbox_on_init(activity_t *activity)
+{
+  int rows = ctx_get_rows(activity->ctx);
+  int cols = ctx_get_cols(activity->ctx);
+  virtual_activity_on_resize(activity, rows, cols);
+}
+
 void activity_sandbox_on_resize(activity_t *activity, int rows, int cols)
 {
   activity_sandbox_t *self = _activity_get_details(activity);

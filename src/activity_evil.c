@@ -35,6 +35,14 @@ int startx, starty, width, height;
 
 extern WINDOW* ACTWIN;
 
+
+void activity_evil_on_init(activity_t *activity)
+{
+  int rows = ctx_get_rows(activity->ctx);
+  int cols = ctx_get_cols(activity->ctx);
+  virtual_activity_on_resize(activity, rows, cols);
+}
+
 void activity_evil_on_resize(activity_t *activity, int rows, int cols)
 {
   activity_evil_t *self = _activity_get_details(activity);

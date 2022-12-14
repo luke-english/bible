@@ -118,6 +118,31 @@ void virtual_activity_dtor(activity_t* activity) {
   free(activity);
 }
 
+void virtual_activity_on_init(activity_t* activity) {
+  char ch[80];
+  switch (activity->type) {
+    case ACTIVITY_TYPE_ALTDATA:
+      activity_altdata_on_init(activity);
+      break;
+    case ACTIVITY_TYPE_EVIL:
+      activity_evil_on_init(activity);
+      break;
+    case ACTIVITY_TYPE_WELCOME:
+      activity_welcome_on_init(activity);
+      break;
+    case ACTIVITY_TYPE_SELECTBOOK:
+      activity_selectbook_on_init(activity);
+      break;
+    case ACTIVITY_TYPE_SANDBOX:
+      activity_sandbox_on_init(activity);
+      break;
+    default:
+      sprintf(ch, "Init not implemented for %d", activity->type);
+      addstr(ch);
+      break;
+  }
+}
+
 void virtual_activity_on_resize(activity_t* activity, int rows, int cols) {
   char ch[80];
   switch (activity->type) {

@@ -26,9 +26,7 @@ void _program_follow_head_activity(program_t* program) {
       program->head_activity = activity_get_next(program->head_activity);
     }
 
-    int rows = ctx_get_rows(program->ctx);
-    int cols = ctx_get_cols(program->ctx);
-    virtual_activity_on_resize(program->head_activity, rows, cols);
+    virtual_activity_on_init(program->head_activity);
   }
 
   while (activity_get_phase(program->head_activity) == ACTIVITY_PHASE_COMPLETE) {
@@ -42,18 +40,20 @@ void _program_follow_head_activity(program_t* program) {
       // TODO End program
     }
 
-    int rows = ctx_get_rows(program->ctx);
-    int cols = ctx_get_cols(program->ctx);
-    virtual_activity_on_resize(program->head_activity, rows, cols);
+    virtual_activity_on_init(program->head_activity);
   }
+}
+
+void program_on_init(program_t* program) {  
+  virtual_activity_on_init(program->head_activity);
+
+  _program_follow_head_activity(program);
 }
 
 void program_on_resize(program_t* program, int rows, int cols) {
   virtual_activity_on_resize(program->head_activity, rows, cols);
 
   ctx_set_size(program->ctx, rows, cols);
-  
-  _program_follow_head_activity(program);
 }
 
 void program_on_keypress(program_t* program, int key) {
