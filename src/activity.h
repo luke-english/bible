@@ -6,6 +6,7 @@
 #define ACTIVITY_TYPE_SELECTBOOK 2
 #define ACTIVITY_TYPE_SANDBOX    3
 #define ACTIVITY_TYPE_ALTDATA    4
+#define ACTIVITY_TYPE_EVIL       5
 
 #define ACTIVITY_PHASE_BACKGROUND 1
 #define ACTIVITY_PHASE_ACTIVE     2
@@ -13,13 +14,17 @@
 
 typedef struct activity_t activity_t;
 
+
 activity_t* activity_altdata_ctor(activity_t* previous, ctx_t* ctx);
+
+activity_t* activity_evil_ctor(activity_t* previous, ctx_t* ctx);
 
 activity_t* activity_welcome_ctor(activity_t* previous, ctx_t* ctx);
 
 activity_t* activity_selectbook_ctor(activity_t* previous, ctx_t* ctx);
 
 activity_t* activity_sandbox_ctor(activity_t* previous, ctx_t* ctx);
+
 
 void virtual_activity_dtor(activity_t* activity);
 

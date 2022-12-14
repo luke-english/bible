@@ -31,6 +31,7 @@ void my_handle_keypress(int ch) {
   }
 }
 
+WINDOW* ACTWIN;
 void on_init() {
   setlocale(LC_ALL, "");
   initscr();
@@ -44,7 +45,7 @@ void on_init() {
 
   init_pair(MY_PAIR_LABEL, COLOR_YELLOW, COLOR_BLACK);
   init_pair(MY_PAIR_WRONG, COLOR_BLACK, COLOR_RED);
-  init_pair(MY_PAIR_TODO, COLOR_WHITE, COLOR_BLACK);
+  init_pair(MY_PAIR_HINT, COLOR_WHITE, COLOR_BLACK);
   init_pair(MY_PAIR_DONE, COLOR_GREEN, COLOR_BLACK);
   init_pair(MY_PAIR_MENU, COLOR_GREEN, COLOR_BLACK);
   init_pair(MY_PAIR_MENU_SELECTED, COLOR_BLACK, COLOR_GREEN);
@@ -52,9 +53,13 @@ void on_init() {
   init_pair(MY_PAIR_DESKTOP, COLOR_BLUE, COLOR_WHITE);
   init_pair(MY_PAIR_ALERT, COLOR_WHITE, COLOR_RED);
 
+  int rows; int cols;
+  getmaxyx(stdscr, rows, cols);
+  program_on_resize(program, rows, cols);
+
   // Starts the main event loop
   while (TRUE) {
-    int ch = getch();
+    int ch = wgetch(ACTWIN);
     my_handle_keypress(ch);
   }
 }

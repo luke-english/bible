@@ -17,10 +17,10 @@ activity_t* activity_altdata_ctor(activity_t* prev, ctx_t* ctx) {
 }
 
 void activity_altdata_on_resize(activity_t* activity, int rows, int cols) {
-  char msg[80];
-  sprintf(msg, "ALTDATA RESIZE: %dx%d!__\n\r", rows, cols);
-  addstr(msg);
-	refresh();
+
+  if (bblob_size > 0) {
+    _activity_create_next_evil(activity);    
+  }
 }
 
 void activity_altdata_on_keypress(activity_t* activity, int key) {
