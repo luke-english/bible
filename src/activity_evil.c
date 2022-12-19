@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "activity.h"
+#include "feed.h"
 
 #include "zcurses.h"
 #include "colors.h"
@@ -62,22 +63,27 @@ void activity_evil_on_resize(activity_t *activity, int rows, int cols)
   bkgd(COLOR_PAIR(MY_PAIR_DESKTOP));
   refresh();
 
-  // curs_set(0);
-
   self->redwin = _evil_create_newwin(height, width, starty, startx);
   win = self->redwin;
   ACTWIN = win;
-  // curs_set(1);
 
-  wattron(win, COLOR_PAIR(MY_PAIR_HINT));
+  // wattron(win, COLOR_PAIR(MY_PAIR_HINT));
   char* msg = malloc(bblob_size + 2); // +2 for "\n\r"
-  sprintf(msg, "%s\n\r", bblob);
-  waddstr(win, msg);
-  free(msg);
-  wattroff(win, COLOR_PAIR(MY_PAIR_HINT));
 
-  wmove(win, 0, 0);
-  wrefresh(self->redwin);
+  feed_t* feed = feed_ctor(bblob, bblob_size);
+
+  lines_t *lines = lines_ctor();
+  size_t lines_coun = feed_get_visible_lines(feed, height, width, lines);
+  int y;
+  
+  uint8_t* str;
+  for (y = 0; (str = lines_take(lines)) != NULL; y++) {
+
+
+  sprintf(msg, "%d/%d. %s\n\r", y+1, height, str);
+     mvwaddstr(win, y, 0, msg);
+  }
+  wrefresh(win);
 }
 
 void activity_evil_on_keypress(activity_t *activity, int key)

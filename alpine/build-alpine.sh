@@ -11,6 +11,9 @@ gcc /mnt/src/zcurses.c -c \
 gcc /mnt/src/getch_async.c -c \
   -o /tmp/obj/getch_async.o
 
+gcc /mnt/src/feed.c -c \
+  -o /tmp/obj/feed.o
+
 gcc /mnt/src/activity.c -c \
   -o /tmp/obj/activity.o
 
@@ -26,6 +29,7 @@ gcc /mnt/src/scripture.c -c \
 gcc \
   -O3 \
   /mnt/src/bible.c \
+  /tmp/obj/feed.o \
   /tmp/obj/activity.o \
   /tmp/obj/ctx.o \
   /tmp/obj/program.o \

@@ -20,6 +20,11 @@ emcc /mnt/src/getch_async.c -c \
   -I /opt/pdcurses/wasm \
   -o /tmp/obj/getch_async.bc.o
 
+emcc /mnt/src/feed.c -c \
+  -I /opt/pdcurses \
+  -I /opt/pdcurses/wasm \
+  -o /tmp/obj/feed.bc.o
+
 emcc /mnt/src/activity.c -c \
   -I /opt/pdcurses \
   -I /opt/pdcurses/wasm \
@@ -47,6 +52,7 @@ emcc \
   -I /opt/pdcurses \
   -I /opt/pdcurses/wasm \
   /mnt/src/bible.c \
+  /tmp/obj/feed.bc.o \
   /tmp/obj/activity.bc.o \
   /tmp/obj/ctx.bc.o \
   /tmp/obj/program.bc.o \
