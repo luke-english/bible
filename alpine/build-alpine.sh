@@ -12,7 +12,7 @@ gcc /mnt/src/getch_async.c -c \
   -o /tmp/obj/getch_async.o
 
 gcc /mnt/src/feed.c -c \
-  -o /tmp/obj/feed.o
+  -o /tmp/obj/feed.o -lunistring
 
 gcc /mnt/src/activity.c -c \
   -o /tmp/obj/activity.o
@@ -26,6 +26,16 @@ gcc /mnt/src/program.c -c \
 gcc /mnt/src/scripture.c -c \
   -o /tmp/obj/scripture.o
 
+
+gcc \
+  /mnt/src/test.c \
+  -o /tmp/test \
+  -lunistring
+
+/tmp/test
+
+echo "💚 test done"
+
 gcc \
   -O3 \
   /mnt/src/bible.c \
@@ -37,6 +47,7 @@ gcc \
   /tmp/obj/getch_async.o \
   /tmp/obj/zcurses.o \
   -o /tmp/bible \
-  -lncurses
+  -lncurses \
+  -lunistring
 
 

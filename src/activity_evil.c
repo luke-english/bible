@@ -82,6 +82,8 @@ void activity_evil_on_resize(activity_t *activity, int rows, int cols)
 
   sprintf(msg, "%d/%d. %s\n\r", y+1, height, str);
      mvwaddstr(win, y, 0, msg);
+  wrefresh(win);
+
   }
   wrefresh(win);
 }
