@@ -13,6 +13,7 @@ struct activity_evil_t
 {
   activity_t *super;
   WINDOW *redwin;
+  feed_t* feed;
 };
 
 WINDOW *_evil_create_newwin(int height, int width, int starty, int startx);
@@ -29,6 +30,7 @@ activity_t *activity_evil_ctor(activity_t *prev, ctx_t *ctx)
 void activity_evil_dtor(activity_evil_t *self)
 {
   delwin(self->redwin);
+  // TODO feed_dtor(self->feed);
   free(self);
 }
 
@@ -39,7 +41,11 @@ extern WINDOW* ACTWIN;
 
 void activity_evil_on_init(activity_t *activity)
 {
+  activity_evil_t *self = _activity_get_details(activity);
+
   curs_set(1);
+
+  self->feed = feed_ctor(bblob, bblob_size);
 
   int rows = ctx_get_rows(activity->ctx);
   int cols = ctx_get_cols(activity->ctx);
@@ -67,23 +73,26 @@ void activity_evil_on_resize(activity_t *activity, int rows, int cols)
   win = self->redwin;
   ACTWIN = win;
 
-  // wattron(win, COLOR_PAIR(MY_PAIR_HINT));
-  char* msg = malloc(bblob_size + 2); // +2 for "\n\r"
-
-  feed_t* feed = feed_ctor(bblob, bblob_size);
+  feed_t* feed = self->feed;
 
   lines_t *lines = lines_ctor();
-  size_t lines_coun = feed_get_visible_lines(feed, height, width, lines);
+  feed_get_visible_lines(feed, height, width, lines);
+   lines = lines_ctor();
+
+  feed_get_visible_lines(feed, height, width, lines);
+   lines = lines_ctor();
+
+  feed_get_visible_lines(feed, height, width, lines);
   int y;
   
   uint8_t* str;
   for (y = 0; (str = lines_take(lines)) != NULL; y++) {
 
-
-  sprintf(msg, "%d/%d. %s\n\r", y+1, height, str);
-     mvwaddstr(win, y, 0, msg);
-  wrefresh(win);
-
+  // char* msg = malloc(bblob_size + 2); // +2 for "\n\r"
+  // sprintf(msg, "%d/%d. %s\n\r", y+1, height, str);
+  //    mvwaddstr(win, y, 0, msg);
+  // wrefresh(win);
+     mvwaddstr(win, y, 0, str);
   }
   wrefresh(win);
 }

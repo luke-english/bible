@@ -67,8 +67,8 @@ void _feed_tokenize(feed_t* feed, uint8_t* str, size_t blen)
   feed->end = NULL;
 
   // strtok works on null-terminated strings:
-  str = realloc(str, blen + 1);
-  str[blen] = '\0';
+  // str = realloc(str, blen + 1);
+  // str[blen] = '\0';
 
   uint8_t* ch = (uint8_t*) strtok((char*)str, "\n");
   token_t* token = (token_t*) malloc(sizeof(token_t));
@@ -101,15 +101,15 @@ void _feed_tokenize(feed_t* feed, uint8_t* str, size_t blen)
 
 int _lines_split_string(lines_t* lines, uint8_t *string, int width) {
 
+  size_t length = u8_strlen(string);
+ 
   size_t start = 0;
   size_t end = 0;
-  size_t length = u8_strlen(string);
 
   int count = 0;
   char* breaks = malloc(sizeof(char) * strlen(string));
 
-
-  int last = u8_width_linebreaks (
+  u8_width_linebreaks (
     string, strlen(string), 100, 0, 0, NULL, "", breaks);
 
 
@@ -120,14 +120,29 @@ int _lines_split_string(lines_t* lines, uint8_t *string, int width) {
   int i = 0;
   int w = 0;
   while (start < length) {
-    end = width;
+
+    // Calculates how many bytes fit in the slice of
+    // the first ${width} characters of the string
+    size_t maxbytes = 0;
+    int j = 0;
+    char* s = string + start;
+    ucs4_t puc;
+    while (s != NULL) {
+      j++;
+      maxbytes += u8_strmblen(s);
+      s = u8_next(&puc, s);
+      char* p = s;
+      if (j == width) {
+        break;
+      }
+    }
+
+    end = maxbytes;
    
-    for (i = start+1, w = 0; i < length; i++) {
-      int x = u8_mblen(string+i, strlen((char*)(string+i)));
-      w += ((x > 0) ? x : 0);
+    if (end < length) for (i = start + 1, w = 0; i < length; i++) {
+      w++;
       
-      if (w >= width) {
-        // end = i;
+      if (w > maxbytes) {
         break;
       }
 
@@ -176,9 +191,9 @@ int _lines_split_string(lines_t* lines, uint8_t *string, int width) {
     node->next = NULL;
     node->prev = NULL;
 
-msg = malloc(sizeof(char) * 1000);
-sprintf(msg, "[%d/%d] %s", end, width, node->ch);
-node->ch = msg;
+// msg = malloc(sizeof(char) * 1000);
+// sprintf(msg, "[%ld/%d] %s", end, maxbytes, node->ch);
+// node->ch = msg;
 
     node->next = NULL;
 
@@ -236,7 +251,7 @@ size_t feed_get_visible_lines(
   // Wrapping 
   int total = 0;
   while (curtok != NULL) {
-    total += _lines_split_string(lines, curtok->ch, 14);
+    total += _lines_split_string(lines, curtok->ch, width);
     curtok = curtok->next;
   }
 
