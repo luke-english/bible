@@ -107,13 +107,13 @@ int _lines_split_string(lines_t* lines, uint8_t *string, int width) {
   size_t end = 0;
 
   int count = 0;
-  char* breaks = malloc(sizeof(char) * strlen(string));
+  char* breaks = malloc(sizeof(char) * strlen((char*) string));
 
   u8_width_linebreaks (
-    string, strlen(string), 100, 0, 0, NULL, "", breaks);
+    string, strlen((char*) string), 100, 0, 0, NULL, "", breaks);
 
 
-  breaks = malloc(sizeof(char) * strlen(string));
+  breaks = malloc(sizeof(char) * strlen((char*) string));
   u8_wordbreaks (string, length, breaks);
 
   char* msg;
@@ -125,17 +125,26 @@ int _lines_split_string(lines_t* lines, uint8_t *string, int width) {
     // the first ${width} characters of the string
     size_t maxbytes = 0;
     int j = 0;
-    char* s = string + start;
+    uint8_t *s = string + start;
     ucs4_t puc;
-    while (s != NULL) {
+    for (const uint8_t *it = s; it; it = u8_next(&puc, it)) {
       j++;
-      maxbytes += u8_strmblen(s);
-      s = u8_next(&puc, s);
-      char* p = s;
+      maxbytes += u8_strmblen(it);
       if (j == width) {
         break;
       }
     }
+
+    // ucs4_t puc;
+    // while (s != NULL) {
+    //   j++;
+    //   maxbytes += u8_strmblen(s);
+    //   s = u8_next(&puc, s);
+    //   char* p = s;
+    //   if (j == width) {
+    //     break;
+    //   }
+    // }
 
     end = maxbytes;
    
@@ -187,7 +196,7 @@ int _lines_split_string(lines_t* lines, uint8_t *string, int width) {
     }
     // Allocate a new node for the split string
     line_t* node = malloc(sizeof(line_t));
-    node->ch = strndup(string + start, end);
+    node->ch = (uint8_t*) strndup((char*) string + start, end);
     node->next = NULL;
     node->prev = NULL;
 
@@ -241,7 +250,7 @@ size_t feed_get_visible_lines(
   token_t* curtok = feed->end;
 
   while (selected_area < area) {
-    selected_area += u8_width(curtok->ch, strlen(curtok->ch), "UTF-8");
+    selected_area += u8_width(curtok->ch, strlen((char*) curtok->ch), "UTF-8");
     if (curtok->prev == NULL) {
       break;
     }

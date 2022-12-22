@@ -26,5 +26,8 @@ ADD pdcurses/wasm /opt/pdcurses/wasm
 WORKDIR /opt/pdcurses/wasm
 RUN emmake make
 
-# Misc
-RUN apt-get install -y libc6-dev-i386 || true
+# Misc.
+# Even though this package fails to install,
+# it leaves gnu/stubs-32.h in the include path.
+# (libunistring header files are trying to include this 32 bit header).
+RUN apt-get update && apt-get install -y libc6-dev-i386 || true
