@@ -134,18 +134,6 @@ int _lines_split_string(lines_t* lines, uint8_t *string, int width) {
         break;
       }
     }
-
-    // ucs4_t puc;
-    // while (s != NULL) {
-    //   j++;
-    //   maxbytes += u8_strmblen(s);
-    //   s = u8_next(&puc, s);
-    //   char* p = s;
-    //   if (j == width) {
-    //     break;
-    //   }
-    // }
-
     end = maxbytes;
    
     if (end < length) for (i = start + 1, w = 0; i < length; i++) {

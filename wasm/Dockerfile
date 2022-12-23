@@ -7,7 +7,7 @@ RUN tar xvzf libunistring-1.1.tar.gz
 
 # Build and install libunistring.
 WORKDIR /opt/libunistring-1.1
-RUN emconfigure ./configure --prefix=/usr \
+RUN emconfigure ./configure --prefix=/opt/usr \
   gl_cv_func_dup2_works=no \
   ac_cv_search_nanosleep=no \
   gl_cv_func_sleep_works=no
@@ -26,8 +26,5 @@ ADD pdcurses/wasm /opt/pdcurses/wasm
 WORKDIR /opt/pdcurses/wasm
 RUN emmake make
 
-# Misc.
-# Even though this package fails to install,
-# it leaves gnu/stubs-32.h in the include path.
-# (libunistring header files are trying to include this 32 bit header).
-RUN apt-get update && apt-get install -y libc6-dev-i386 || true
+# libunistring header files are trying to include this 32 bit header
+RUN mkdir /opt/usr/include/gnu && touch /opt/usr/include/gnu/stubs-32.h

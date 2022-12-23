@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <locale.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "program.h"
 #include "ctx.h"
@@ -74,22 +77,20 @@ void on_init() {
   }
 }
 
-#define PAGE_SIZE 24
+// Assume stdin is very big
+#define PAGE_SIZE 65536 * 100 // 64 KB x 100
 
 void load_altdata() {
   FILE *fp = stdin;
 
   bblob = malloc(PAGE_SIZE);
-  size_t memory = PAGE_SIZE;
-  int32_t ch;
-  while ((ch = fgetc(fp)) != EOF && ch != 255) {
-    if (bblob_size == memory - 1) {
-        memory += PAGE_SIZE;
-        bblob = (uint8_t *) realloc(bblob, memory);
-    }
+  int ch;
+  while ((ch = fgetc(fp)) != EOF) {
     bblob[bblob_size] = ch;
     bblob_size++;
-  }  
+  }
+  // downsize to what we need
+  bblob = (uint8_t *) realloc(bblob, bblob_size+1);
 }
 
 #ifdef __EMSCRIPTEN__

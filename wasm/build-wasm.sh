@@ -21,8 +21,7 @@ emcc /mnt/src/getch_async.c -c \
   -o /tmp/obj/getch_async.bc.o
 
 emcc /mnt/src/feed.c -c \
-  -I /usr/include \
-  -I /usr/include/x86_64-linux-gnu \
+  -I /opt/usr/include \
   -I /opt/pdcurses \
   -I /opt/pdcurses/wasm \
   -o /tmp/obj/feed.bc.o
@@ -62,5 +61,5 @@ emcc \
   /tmp/obj/zcurses.bc.o \
   /tmp/obj/getch_async.bc.o \
   /opt/pdcurses/wasm/libpdcurses.so \
-  /usr/lib/libunistring.so \
+  /opt/usr/lib/libunistring.so \
   -o /mnt/wasm/bible.wasm

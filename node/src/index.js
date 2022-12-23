@@ -26,16 +26,19 @@ export const loadWasm = (domElement, {altdata}) => {
     return terminal;
   }
   
+
   var asmLibraryArg = {
     ...curses(ctx),
-    proc_exit: () => {},
+    proc_exit: (status) => {
+      throw new Error("Exit with status: " + status);
+    },
     fd_close: () => {},
     fd_write: () => {},
     environ_sizes_get: () => {},
     environ_get: () => {},
     fd_seek: () => {},
     fd_read: (fd, iovs, iovsLen, nread) => {
-      console.log({fd, iovs, iovsLen, nread})
+      // console.log({fd, iovs, iovsLen, nread})
       // only care about 'stdin'
       if(fd !== 0)
         throw new Error('fd_read: fd != 0');
@@ -49,7 +52,7 @@ export const loadWasm = (domElement, {altdata}) => {
           const    buf = view.getUint32(ptr, true);
           const bufLen = view.getUint32(ptr + 4, true);
   
-          console.log({ptr, buf, bufLen})
+          // console.log({ptr, buf, bufLen})
           return new Uint8Array(ctx.buffer, buf, bufLen);
       });
 
@@ -74,7 +77,7 @@ export const loadWasm = (domElement, {altdata}) => {
     "wasi_snapshot_preview1": asmLibraryArg
   };
   
-  return fetch("./wasm/bible.wasm")
+  return fetch("./wasm/bible.wasm?t="+(new Date()).getTime())
     .then((response) => response.arrayBuffer())
     .then((bytes) => Asyncify.instantiate(bytes, importObject))
 

@@ -213,6 +213,9 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     ctx.inputchar = null;
     return char;
   }
+  js_curses_scr_close = () => {
+    console.log("js_curses_scr_close");
+  }
 
   const await_timeout = async (ms) => {
     // console.log('await_timeout in index.js', ms)
@@ -230,6 +233,9 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     const m =  enc.decode(new Uint8Array(bytes));
     console.log(m);
   }
+  emscripten_notify_memory_growth = (ptr) => {
+    console.log("memory grow detected", ptr);
+  }
 
   return {
     js_curses_get_rows,
@@ -243,8 +249,10 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     js_curses_check_key,
     js_curses_get_key,
     js_curses_transform_line,
+    js_curses_scr_close,
     await_timeout,
     browser_log,
+    emscripten_notify_memory_growth
   };
 }
 
