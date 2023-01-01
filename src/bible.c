@@ -1,9 +1,6 @@
 #include <stdlib.h>
-#include <stdio.h>
+// #include <stdio.h>
 #include <locale.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 
 #include "program.h"
@@ -83,9 +80,23 @@ void on_init() {
 void load_altdata() {
   FILE *fp = stdin;
 
-  bblob = malloc(PAGE_SIZE);
+  size_t allocated = PAGE_SIZE;
+  bblob = malloc(allocated);
+
   int ch;
   while ((ch = fgetc(fp)) != EOF) {
+
+    // // Should allocate more memory already?
+    // if (bblob_size > allocated - 3) {
+    //   allocated += PAGE_SIZE;
+    //   void* tmp = realloc(bblob, allocated);
+    //   browser_log("Failed to allocate memory\n\0");
+    //   if (tmp == NULL) {
+    //     exit(EXIT_FAILURE);
+    //   }
+    //   bblob = tmp;     
+    // }
+
     bblob[bblob_size] = ch;
     bblob_size++;
   }

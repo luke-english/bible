@@ -231,7 +231,7 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
 
     const enc = new TextDecoder()
     const m =  enc.decode(new Uint8Array(bytes));
-    console.log(m);
+    console.log("BL: " + m);
   }
   emscripten_notify_memory_growth = (ptr) => {
     console.log("memory grow detected", ptr);
