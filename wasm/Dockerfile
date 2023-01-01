@@ -19,11 +19,11 @@ WORKDIR /opt
 RUN git clone --branch master https://github.com/luke10x/PDCurses.git pdcurses
 ENV PDCURSES_SRCDIR=/opt/pdcurses
 
-# Add WASM module for PDCurses.
+# Add WASM module for PDCurses
 ADD pdcurses/wasm /opt/pdcurses/wasm
-ADD pdcurses/addstr.c /opt/pdcurses/addstr.c
-ADD pdcurses/curspriv.h /opt/pdcurses/cursprinv.h
-ADD pdcurses/util.c /opt/pdcurses/util.c
+# And custom changes to PDCurses core
+ADD pdcurses/pdcurses/* /opt/pdcurses/pdcurses/
+ADD pdcurses/curspriv.h /opt/pdcurses/
 
 # Build and install PDCurses.
 WORKDIR /opt/pdcurses/wasm
