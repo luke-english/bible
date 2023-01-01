@@ -16,11 +16,14 @@ RUN emmake make install
 
 # Fetch patched distribution of PDCurses from version control.
 WORKDIR /opt
-RUN git clone --branch wasm https://github.com/luke10x/PDCurses.git pdcurses
+RUN git clone --branch master https://github.com/luke10x/PDCurses.git pdcurses
 ENV PDCURSES_SRCDIR=/opt/pdcurses
 
 # Add WASM module for PDCurses.
 ADD pdcurses/wasm /opt/pdcurses/wasm
+ADD pdcurses/addstr.c /opt/pdcurses/addstr.c
+ADD pdcurses/curspriv.h /opt/pdcurses/cursprinv.h
+ADD pdcurses/util.c /opt/pdcurses/util.c
 
 # Build and install PDCurses.
 WORKDIR /opt/pdcurses/wasm
