@@ -102,6 +102,7 @@ void load_altdata() {
   }
   // downsize to what we need
   bblob = (uint8_t *) realloc(bblob, bblob_size+1);
+  fprintf(stderr, "Loaded %zu bytes\n" "(%s:%d)",  bblob_size, __FILE__, __LINE__);
 }
 
 #ifdef __EMSCRIPTEN__

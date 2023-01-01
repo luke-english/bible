@@ -7,6 +7,7 @@ export const loadWasm = (domElement, {altdata}) => {
   const ctx = {};
 
   const utf8Encode = new TextEncoder();
+  const utf8Decoder = new TextDecoder();
   ctx.altdata = Array.from(utf8Encode.encode(altdata));
 
   const createTerminal = () => {
@@ -33,7 +34,34 @@ export const loadWasm = (domElement, {altdata}) => {
       throw new Error("Exit with status: " + status);
     },
     fd_close: () => {},
-    fd_write: () => {},
+    fd_write: (fd, iovs, iovsLen, nread) => {
+      console.log("fd_write", {fd, iovs, iovsLen, nread});
+      if(fd !== 2) {
+        throw new Error('fd_write: fd != stderr');
+      }
+    
+      const view = new DataView(ctx.buffer);
+      view.setUint32(nread, 0, true);
+  
+      // create a UInt8Array for each buffer
+      const buffers = Array.from({ length: iovsLen }, (_, i) => {
+          const ptr = iovs + i * 8;
+          const buf = view.getUint32(ptr, true);
+          const bufLen = view.getUint32(ptr + 4, true);
+  
+          return new Uint8Array(ctx.buffer, buf, bufLen);
+      });
+
+      // print each buffer
+      buffers.forEach(buf => {
+        if (buf.length) {
+          console.log("⛑️ ", utf8Decoder.decode(buf));
+        }
+        view.setUint32(nread, view.getUint32(nread, true) + buf.length, true);
+      });
+
+      return 1; // return 1 for success
+    },
     environ_sizes_get: () => {},
     environ_get: () => {},
     fd_seek: () => {},
