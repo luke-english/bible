@@ -1,9 +1,4 @@
 /* Public Domain Curses */
-
-#include "pdcwasm.h"
-
-#include <stdlib.h>
-
 /*man-start**************************************************************
 
   Name:                                                         clipboard
@@ -42,6 +37,11 @@
         PDC_clearclipboard                      -       -       -
 
 **man-end****************************************************************/
+
+#include <curspriv.h>
+
+#include <stdlib.h>
+
 
 int PDC_getclipboard(char **contents, long *length)
 {

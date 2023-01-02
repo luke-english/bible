@@ -1,7 +1,11 @@
 /* Public Domain Curses */
 
+#include <curspriv.h>
+
 #include <emscripten.h>
-#include "pdcwasm.h"
+
+EM_JS(void, await_timeout, (int ms));
+
 
 /*
 Emits a short audible beep. If this is not possible on your platform,
@@ -14,11 +18,6 @@ void PDC_beep(void)
     PDC_LOG(("PDC_beep() - called\n"));
     /* FIXME */
 }
-
-/*
-Implemented in Javascript must be passed in the import-object
-*/
-EM_JS(void, await_timeout, (int ms));
 
 /*
 This is the core delay routine, called by napms(). It pauses for about

@@ -5,12 +5,6 @@ set -o pipefail
 
 mkdir -p /tmp/obj
 
-gcc /mnt/src/zcurses.c -c \
-  -o /tmp/obj/zcurses.o
-
-gcc /mnt/src/getch_async.c -c \
-  -o /tmp/obj/getch_async.o
-
 gcc /mnt/src/feed.c -c \
   -o /tmp/obj/feed.o -lunistring
 
@@ -44,8 +38,6 @@ gcc \
   /tmp/obj/ctx.o \
   /tmp/obj/program.o \
   /tmp/obj/scripture.o \
-  /tmp/obj/getch_async.o \
-  /tmp/obj/zcurses.o \
   -o /tmp/bible \
   -lncurses \
   -lunistring

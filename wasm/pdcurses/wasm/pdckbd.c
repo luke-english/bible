@@ -18,7 +18,13 @@
 
 #include <string.h>
 
-#include "pdcwasm.h"
+#include <curspriv.h>
+
+#include <emscripten.h>
+
+EM_JS(int, js_curses_check_key, (void));
+EM_JS(void, js_curses_flushinp, (void));
+EM_JS(int, js_curses_get_key, (void));
 
 /*
 Keyboard/mouse event check, called from wgetch(). Returns TRUE if

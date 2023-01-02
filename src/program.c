@@ -3,6 +3,7 @@
 
 #include "program.h"
 #include "activity.h"
+
 typedef struct program_t program_t;
 
 struct program_t {

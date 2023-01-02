@@ -2,12 +2,11 @@
 // #include <stdio.h>
 #include <locale.h>
 #include <unistd.h>
+#include <curses.h>
 
 #include "program.h"
 #include "ctx.h"
 #include "activity.h"
-
-#include "zcurses.h"
 
 #include "colors.h"
 #include "bible.h"
@@ -91,7 +90,7 @@ void load_altdata() {
     // if (bblob_size > allocated - 3) {
     //   allocated += PAGE_SIZE;
     //   void* tmp = realloc(bblob, allocated);
-    //   browser_log("Failed to allocate memory\n\0");
+    //   BLOG("Failed to allocate memory\n\0");
     //   if (tmp == NULL) {
     //     exit(EXIT_FAILURE);
     //   }

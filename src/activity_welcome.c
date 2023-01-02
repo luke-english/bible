@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <curses.h>
 
 #include "activity.h"
 
-#include "zcurses.h"
 #include "colors.h"
 
 activity_t* activity_welcome_ctor(activity_t* prev, ctx_t* ctx) {

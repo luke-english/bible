@@ -1,12 +1,17 @@
 /* Public Domain Curses */
 
-#include "pdcwasm.h"
+#include <curspriv.h>
 
 #include <stdlib.h>
 #include <string.h>
 // #ifdef PDC_WIDE
 # include "../common/acsuni.h"
 // #else
+
+#include <emscripten.h>
+
+EM_JS(void, js_curses_gotoyx, (const int row, const int col));
+EM_JS(void, js_curses_transform_line, (int lineno, int x, int len, const void *srcp, short fg, short bg));
 
 /*
 Called at the end of doupdate(), this function finalizes the update of

@@ -222,17 +222,6 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     return await new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  const browser_log = (ptr) => {
-    const snapshot = new Uint8Array(ctx.buffer);
-    const bytes = []
-    for (i = ptr;  i < ptr+30; i++) {
-        bytes.push(snapshot[i])
-    }
-
-    const enc = new TextDecoder()
-    const m =  enc.decode(new Uint8Array(bytes));
-    console.log("BL: " + m);
-  }
   emscripten_notify_memory_growth = (ptr) => {
     console.log("memory grow detected", ptr);
   }
@@ -251,7 +240,6 @@ enc.encode('🦄')  [240, 159, 166, 132, ] orig 23 1
     js_curses_transform_line,
     js_curses_scr_close,
     await_timeout,
-    browser_log,
     emscripten_notify_memory_growth
   };
 }

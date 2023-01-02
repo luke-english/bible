@@ -1,9 +1,16 @@
 /* Public Domain Curses */
 
-#include "pdcwasm.h"
+#include <curspriv.h>
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <emscripten.h>
+
+EM_JS(void, js_curses_scr_close, (void));
+EM_JS(void, js_curses_scr_open, (void));
+EM_JS(void, js_curses_resize_screen, (const int nrows, const int ncols));
+
 
 /* COLOR_PAIR to attribute encoding table. */
 

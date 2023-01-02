@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <curses.h>
 
 #include "activity.h"
 #include "feed.h"
 
-#include "zcurses.h"
 #include "colors.h"
 
 typedef struct activity_evil_t activity_evil_t;

@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <curses.h>
 
 #include "activity.h"
 
-#include "zcurses.h"
 #include "colors.h"
 
 typedef struct activity_sandbox_t activity_sandbox_t;

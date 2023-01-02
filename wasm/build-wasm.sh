@@ -10,16 +10,6 @@ set -o pipefail
 
 mkdir -p /tmp/obj
 
-emcc /mnt/src/zcurses.c -c \
-  -I /opt/pdcurses \
-  -I /opt/pdcurses/wasm \
-  -o /tmp/obj/zcurses.bc.o
-
-emcc /mnt/src/getch_async.c -c \
-  -I /opt/pdcurses \
-  -I /opt/pdcurses/wasm \
-  -o /tmp/obj/getch_async.bc.o
-
 emcc /mnt/src/feed.c -c \
   -I /opt/usr/include \
   -I /opt/pdcurses \
@@ -58,8 +48,6 @@ emcc \
   /tmp/obj/ctx.bc.o \
   /tmp/obj/program.bc.o \
   /tmp/obj/scripture.bc.o \
-  /tmp/obj/zcurses.bc.o \
-  /tmp/obj/getch_async.bc.o \
   /opt/pdcurses/wasm/libpdcurses.so \
   /opt/usr/lib/libunistring.so \
   -o /mnt/wasm/bible.wasm

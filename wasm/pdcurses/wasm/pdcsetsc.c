@@ -1,7 +1,5 @@
 /* Public Domain Curses */
 
-#include "pdcwasm.h"
-
 /*man-start**************************************************************
 
   Name:                                                         pdcsetsc
@@ -28,6 +26,15 @@
         PDC_set_title                           -       -       -
 
 **man-end****************************************************************/
+
+
+#include <curspriv.h>
+
+#include <emscripten.h>
+
+EM_JS(void, js_curses_curs_on, (void));
+EM_JS(void, js_curses_curs_off, (void));
+
 
 /*
 Called from curs_set(). Changes the appearance of the cursor -- 0 turns

@@ -1,7 +1,12 @@
 /* Public Domain Curses */
 
-#include "pdcwasm.h"
+#include <curspriv.h>
 
+#include <emscripten.h>
+
+EM_JS(int, js_curses_get_cols, (void));
+EM_JS(int, js_curses_get_rows, (void));
+EM_JS(int, js_curses_get_cursor_mode, (void));
 
 /*
 Returns the size of the screen in columns. It's used in initscr() and

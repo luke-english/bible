@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <curses.h>
 
 #include "activity.h"
-#include "zcurses.h"
 #include "colors.h"
 
 typedef struct activity_t activity_t;
