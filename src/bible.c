@@ -10,6 +10,7 @@
 #include "zcurses.h"
 
 #include "colors.h"
+#include "bible.h"
 
 uint8_t* bblob = NULL;
 size_t bblob_size = 0;
@@ -97,12 +98,12 @@ void load_altdata() {
     //   bblob = tmp;     
     // }
 
-    bblob[bblob_size] = ch;
+    bblob[bblob_size] = ch; 
     bblob_size++;
   }
   // downsize to what we need
   bblob = (uint8_t *) realloc(bblob, bblob_size+1);
-  fprintf(stderr, "Loaded %zu bytes\n" "(%s:%d)",  bblob_size, __FILE__, __LINE__);
+  BLOG("Loaded %zu bytes\n",  bblob_size);
 }
 
 #ifdef __EMSCRIPTEN__
