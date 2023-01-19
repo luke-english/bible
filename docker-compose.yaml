@@ -24,7 +24,7 @@ services:
         fi
 
   node:
-    image: node
+    image: node:16.19.0-buster-slim
     working_dir: /mnt/node
     volumes:
       - ./node:/mnt/node:rw
@@ -32,6 +32,18 @@ services:
     command:
       - |
         npm run build
+
+  storybook:
+    image: node:16.19.0-buster-slim
+    working_dir: /mnt/storybook
+    volumes:
+      - ./storybook:/mnt/storybook:rw
+    entrypoint: "bash -c"
+    command:
+      - |
+        npm run storybook      
+    ports:
+      - 16006:6006
 
   wasm:
     build:

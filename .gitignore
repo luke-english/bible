@@ -1,5 +1,6 @@
 /alpine/bible
 /node/node_modules/
+/storybook/node_modules/
 /wasm/*.wasm
 /node/dist/
 /src/curses.h
